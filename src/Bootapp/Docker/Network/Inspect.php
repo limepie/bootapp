@@ -12,7 +12,7 @@ class Inspect extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('network:inspect')
+            ->setName('docker-network:inspect')
             ->setDescription('Display detailed network information')
             ->addArgument(
                 'name',
@@ -78,7 +78,7 @@ class Inspect extends \Bootapp\Command
                 }
             }
 
-            $messages = $this->command($whichDocker.' network inspect '.$formatString.$name);
+            $messages = $this->command($whichDocker.' network inspect'.$formatString.' '.$name);
             $this->writeln($messages, OutputInterface::VERBOSITY_QUIET);
         }
     }

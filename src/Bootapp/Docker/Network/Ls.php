@@ -10,7 +10,7 @@ class Ls extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('network:ls')
+            ->setName('docker-network:ls')
             ->setDescription('List all networks');
     }
 

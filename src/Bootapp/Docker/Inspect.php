@@ -12,7 +12,7 @@ class Inspect extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('inspect')
+            ->setName('docker:inspect')
             ->setDescription('Return low-level information on a container or image')
             ->addArgument(
                 'name',
@@ -78,7 +78,7 @@ class Inspect extends \Bootapp\Command
                 }
             }
 
-            $messages = $this->command($whichDocker.' inspect '.$formatString.$name);
+            $messages = $this->command($whichDocker.' inspect'.$formatString.' '.$name);
             $this->writeln($messages, OutputInterface::VERBOSITY_QUIET);
         }
     }

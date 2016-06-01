@@ -1,5 +1,5 @@
 <?php
-namespace Bootapp\Docker;
+namespace Bootapp\Docker\Compose;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,7 +10,7 @@ class Down extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('down')
+            ->setName('docker-compose:down')
             ->setDescription('Stop and remove containers, networks, images, and volumes');
     }
 

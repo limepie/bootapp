@@ -11,7 +11,7 @@ class Rm extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('network:rm')
+            ->setName('docker-network:rm')
             ->setDescription('Remove a network')
             ->addArgument(
                 'name',

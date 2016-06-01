@@ -1,5 +1,5 @@
 <?php
-namespace Bootapp\Docker;
+namespace Bootapp\Docker\Compose;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,7 +10,7 @@ class Host extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('host')
+            ->setName('docker-compose:host')
             ->setDescription('Host Infomation');
     }
 

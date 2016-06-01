@@ -12,7 +12,7 @@ class Inspect extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('machine:inspect')
+            ->setName('docker-machine:inspect')
             ->setDescription('Inspect information about a machine')
             ->addArgument(
                 'name',
@@ -59,7 +59,7 @@ class Inspect extends \Bootapp\Command
         }
 
         $whichDockerMachine = $this->whichDockerMachine();
-        $messages           = $this->command($whichDockerMachine.' inspect '.$formatString.$name);
+        $messages           = $this->command($whichDockerMachine.' inspect'.$formatString.' '.$name);
         $this->writeln($messages, OutputInterface::VERBOSITY_QUIET);
     }
 }

@@ -10,7 +10,7 @@ class Rm extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('machine:rm')
+            ->setName('docker-machine:rm')
             ->setDescription('Remove a machine');
     }
 

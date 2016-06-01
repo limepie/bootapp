@@ -1,12 +1,12 @@
 <?php
-namespace Bootapp\Phinx;
+namespace Bootapp\Migration;
 
-use Bootapp\Phinx;
+use Bootapp\Migration;
 use Symfony\Component\Console\Input\InputOption;
 
 class Status extends \Phinx\Console\Command\Status
 {
-    use Phinx;
+    use Migration;
     /**
      * {@inheritdoc}
      */
@@ -14,15 +14,15 @@ class Status extends \Phinx\Console\Command\Status
     {
         $this->addOption('--environment', '-e', InputOption::VALUE_REQUIRED, 'The target environment.', $this->defaultEnvironment);
 
-        $this->setName('phinx:status')
+        $this->setName('migration:status')
             ->setDescription('Show migration status')
             ->addOption('--format', '-f', InputOption::VALUE_REQUIRED, 'The output format: text or json. Defaults to text.')
             ->setHelp(
                 <<<EOT
 The <info>status</info> command prints a list of all migrations, along with their current status
 
-<info>bootapp phinx:status -e development</info>
-<info>bootapp phinx:status -e development -f json</info>
+<info>bootapp migration:status -e development</info>
+<info>bootapp migration:status -e development -f json</info>
 EOT
             );
     }

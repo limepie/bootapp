@@ -1,12 +1,12 @@
 <?php
-namespace Bootapp\Phinx;
+namespace Bootapp\Migration;
 
-use Bootapp\Phinx;
+use Bootapp\Migration;
 use Symfony\Component\Console\Input\InputOption;
 
 class SeedRun extends \Phinx\Console\Command\SeedRun
 {
-    use Phinx;
+    use Migration;
     /**
      * {@inheritdoc}
      */
@@ -14,16 +14,16 @@ class SeedRun extends \Phinx\Console\Command\SeedRun
     {
         $this->addOption('--environment', '-e', InputOption::VALUE_REQUIRED, 'The target environment'$this->defaultEnvironment);
 
-        $this->setName('phinx:seed:run')
+        $this->setName('migration:seed:run')
             ->setDescription('Run database seeders')
             ->addOption('--seed', '-s', InputOption::VALUE_REQUIRED, 'What is the name of the seeder?')
             ->setHelp(
                 <<<EOT
 The <info>seed:run</info> command runs all available or individual seeders
 
-<info>bootapp phinx:seed:run -e development</info>
-<info>phinx seed:run -e development -s UserSeeder</info>
-<info>phinx seed:run -e development -v</info>
+<info>bootapp migration:seed:run -e development</info>
+<info>bootapp migration:seed:run -e development -s UserSeeder</info>
+<info>bootapp migration:seed:run -e development -v</info>
 
 EOT
             );

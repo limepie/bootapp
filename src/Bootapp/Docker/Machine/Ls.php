@@ -10,7 +10,7 @@ class Ls extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('machine:ls')
+            ->setName('docker-machine:ls')
             ->setDescription('List machines');
     }
 

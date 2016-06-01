@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Console\Output\OutputInterface;
 
-trait Phinx
+trait Migration
 {
     /**
      * @var string
@@ -21,12 +21,18 @@ trait Phinx
     {
         $stageName = 'local';
         //parent::configure();
+        $output->writeln('<info>Phinx by Rob Morgan - https://phinx.org.</info>');
+
+        if (false == is_file(getcwd().'/env.yml')) {
+            throw new \RuntimeException('env.yml 파일이 위치한 곳에서 실행해주세요.');
+        }
 
         try {
             $array = Yaml::parse(file_get_contents(getcwd().'/env.yml'));
         } catch (ParseException $e) {
             throw new \RuntimeException('Unable to parse the YAML string: %s', $e->getMessage());
         }
+
         $mysql = $array['stages'][$stageName]['services']['mysql']['environment'];
         parse_str(str_replace(';', '&', $mysql['server']['master']), $out);
 

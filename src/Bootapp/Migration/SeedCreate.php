@@ -1,18 +1,18 @@
 <?php
-namespace Bootapp\Phinx;
+namespace Bootapp\Migration;
 
-use Bootapp\Phinx;
+use Bootapp\Migration;
 use Symfony\Component\Console\Input\InputArgument;
 
 class SeedCreate extends \Phinx\Console\Command\SeedCreate
 {
-    use Phinx;
+    use Migration;
     /**
      * {@inheritdoc}
      */
     public function configure()
     {
-        $this->setName('phinx:seed:create')
+        $this->setName('migration:seed:create')
             ->setDescription('Create a new database seeder')
             ->addArgument('name', InputArgument::REQUIRED, 'What is the name of the seeder?')
             ->setHelp(sprintf(

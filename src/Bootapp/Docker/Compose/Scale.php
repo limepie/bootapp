@@ -1,5 +1,5 @@
 <?php
-namespace Bootapp\Docker;
+namespace Bootapp\Docker\Compose;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,8 +11,8 @@ class Scale extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('scale')
-            ->setDescription('Return low-level information on a container or image')
+            ->setName('docker-compose:scale')
+            ->setDescription('Set number of containers for a service')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,

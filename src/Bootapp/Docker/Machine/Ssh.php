@@ -1,5 +1,5 @@
 <?php
-namespace Bootapp\Docker;
+namespace Bootapp\Docker\Machine;
 
 use Symfony\Component\Console\Command\Command;
 
@@ -8,7 +8,7 @@ class Ssh extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('ssh')
+            ->setName('docker-machine:ssh')
             ->setDescription('Log into or run a command on a machine with SSH');
     }
 

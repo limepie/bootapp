@@ -1,20 +1,20 @@
 <?php
-namespace Bootapp\Phinx;
+namespace Bootapp\Migration;
 
-use Bootapp\Phinx;
+use Bootapp\Migration;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
 class Create extends \Phinx\Console\Command\Create
 {
-    use Phinx;
+    use Migration;
 
     /**
      * {@inheritdoc}
      */
     public function configure()
     {
-        $this->setName('phinx:create')
+        $this->setName('migration:create')
             ->setDescription('Create a new migration')
             ->addArgument('name', InputArgument::REQUIRED, 'What is the name of the migration?')
             ->setHelp(sprintf(

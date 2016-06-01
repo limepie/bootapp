@@ -1,5 +1,5 @@
 <?php
-namespace Bootapp\Docker;
+namespace Bootapp\Docker\Compose;
 
 use Symfony\Component\Console\Command\Command;
 
@@ -9,7 +9,7 @@ class Up extends \Bootapp\Command
     {
         //starts and provisions the docker environment
         $this
-            ->setName('up')
+            ->setName('docker-compose:up')
             ->setDescription('Create and start containers')
             /*
             ->addArgument(

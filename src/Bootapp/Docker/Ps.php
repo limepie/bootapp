@@ -9,7 +9,7 @@ class Ps extends \Bootapp\Command
     protected function configure()
     {
         $this
-            ->setName('ps')
+            ->setName('docker:ps')
             ->setDescription('List containers')
             ->addOption(
                 'format',
