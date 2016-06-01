@@ -1,0 +1,102 @@
+#!/usr/bin/env php
+<?php
+
+$loaded = false;
+
+foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
+    if (file_exists($file)) {
+        require $file;
+        $loaded = true;
+        break;
+    }
+}
+
+if (!$loaded) {
+    die(
+        'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+        'wget http://getcomposer.org/composer.phar' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL
+    );
+}
+
+echo <<<LOGO
+ _                 _
+| |__   ___   ___ | |_    __ _ _ __  _ __
+| '_ \ / _ \ / _ \| __|  / _` | '_ \| '_ \
+| |_) | (_) | (_) | |_  | (_| | |_) | |_) |
+|_.__/ \___/ \___/ \__|  \__,_| .__/| .__/  {{version}}
+                              |_|   |_|
+
+LOGO;
+
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    throw new \RuntimeException("{$errstr} on {$errfile}:{$errline}");
+});
+
+$application = new \Symfony\Component\Console\Application('Bootapp', '{{version}}');
+$application->add(new \Bootapp\Phinx\Migrate());
+$application->add(new \Bootapp\Phinx\Create());
+$application->add(new \Bootapp\Phinx\Rollback());
+$application->add(new \Bootapp\Phinx\Status());
+//$application->add(new \Bootapp\Phinx\SeedCreate());
+//$application->add(new \Bootapp\Phinx\SeedRun());
+$application->add(new \Bootapp\Docker\Up());
+$application->add(new \Bootapp\Docker\Down());
+$application->add(new \Bootapp\Docker\Ssh());
+$application->add(new \Bootapp\Docker\Ps());
+$application->add(new \Bootapp\Docker\Host());
+$application->add(new \Bootapp\Docker\Inspect());
+$application->add(new \Bootapp\Docker\Scale());
+$application->add(new \Bootapp\Docker\Machine\Rm());
+$application->add(new \Bootapp\Docker\Machine\Ls());
+$application->add(new \Bootapp\Docker\Machine\Inspect());
+$application->add(new \Bootapp\Docker\Composer\Install());
+$application->add(new \Bootapp\Docker\Composer\Update());
+$application->add(new \Bootapp\Docker\Network\Ls());
+$application->add(new \Bootapp\Docker\Network\Rm());
+$application->add(new \Bootapp\Docker\Network\Inspect());
+$application->add(new \Bootapp\Docker\Project\Create());
+$application->add(new \Bootapp\Docker\Selfupdate());
+
+$application->setCatchExceptions(false);
+try {
+    $output = new Symfony\Component\Console\Output\ConsoleOutput();
+
+
+    if ($output->getVerbosity() == 16) {
+    } else {
+        $output->setVerbosity($output::VERBOSITY_DEBUG);
+    }
+
+    $application->run(null, $output);
+} catch (Exception $e) {
+    $output->setVerbosity($output::VERBOSITY_QUIET);
+    $application->renderException($e, $output);
+
+    /*
+    $output->writeln('<comment>Exception trace:</comment>', $output::VERBOSITY_QUIET);
+    // exception related properties
+    $trace = $e->getTrace();
+    array_unshift($trace, array(
+        'function' => '',
+        'file' => $e->getFile() !== null ? $e->getFile() : 'n/a',
+        'line' => $e->getLine() !== null ? $e->getLine() : 'n/a',
+        'args' => array(),
+    ));
+
+    for ($i = 0, $count = count($trace); $i < $count; ++$i) {
+        $class = isset($trace[$i]['class']) ? $trace[$i]['class'] : '';
+        $type = isset($trace[$i]['type']) ? $trace[$i]['type'] : '';
+        $function = $trace[$i]['function'];
+        $file = isset($trace[$i]['file']) ? $trace[$i]['file'] : 'n/a';
+        $line = isset($trace[$i]['line']) ? $trace[$i]['line'] : 'n/a';
+
+        $output->writeln(sprintf(' %s%s%s() at <info>%s:%s</info>', $class, $type, $function, $file, $line), $output::VERBOSITY_QUIET);
+    }
+
+    $output->writeln('', $output::VERBOSITY_QUIET);
+    */
+    $statusCode = $e->getCode();
+    $statusCode = is_numeric($statusCode) && $statusCode ? $statusCode : 1;
+    exit($statusCode);
+}

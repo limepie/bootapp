@@ -1,0 +1,24 @@
+{
+  "name": "yejune/bootapp",
+  "require": {
+    "symfony/process": "dev-master",
+    "symfony/console": "dev-master",
+    "symfony/finder": "dev-master",
+    "symfony/yaml": "dev-master",
+    "herrera-io/phar-update": "dev-master",
+    "robmorgan/phinx": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bootapp\\": "src/Bootapp/",
+      "Herrera\\": "src/lib/Herrera/",
+      "Phinx\\": "src/Phinx/"
+    }
+  },
+  "bin": [
+    "bin/bootapp"
+  ],
+  "repositories": {
+     "packagist": { "url": "https://packagist.org", "type": "composer" }
+  }
+}

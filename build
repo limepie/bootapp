@@ -1,0 +1,123 @@
+#!/usr/bin/env php
+<?php
+require __DIR__.'/vendor/autoload.php';
+
+$opt      = getopt('v::');
+
+$version  = '0.0.0';
+$manifest = 'manifest.json';
+
+if (true === file_exists($manifest)) {
+    $manifestArray = (array)json_decode(file_get_contents($manifest), true);
+} else {
+    $manifestArray = [];
+}
+
+$count = count($manifestArray) - 1;
+
+if ($count >= 0 && true === isset($manifestArray[$count])) {
+    $version = $manifestArray[$count]['version'];
+}
+
+if (array_key_exists('v', $opt)) {
+    $vtype = 'patch';
+    if(true === in_array($opt['v'], 'major', 'minor', 'patch')) {
+        $vtype = $opt['v'];
+    }
+    $version = versionup($version, $vtype);
+
+    if (!preg_match('/^\d+\.\d+\.\d+(-[\d\w\.]+)?$/i', $version)) {
+        exit("Version number must follow semantic versioning.\n");
+    }
+}
+
+$pharName = 'bootapp.phar';
+$pharFile = __DIR__.'/'.$pharName;
+
+if (file_exists($pharFile)) {
+    unlink($pharFile);
+}
+
+$phar = new \Phar($pharFile, 0, $pharName);
+$phar->setSignatureAlgorithm(\Phar::SHA1);
+$phar->startBuffering();
+
+echo __DIR__;
+$finder = new Symfony\Component\Finder\Finder();
+$finder->files()
+    ->ignoreVCS(true)
+    ->exclude('docs')
+    ->exclude('phpunit')
+    ->notName('*.md')
+    ->notName('*.mdown')
+    ->notName('phpunit.*')
+    ->exclude('Tests')
+    ->exclude('test')
+    ->exclude('tests')
+    ->exclude('phpspec')
+    ->in(__DIR__);
+
+foreach ($finder as $fileInfo) {
+    $file = str_replace(__DIR__, '', $fileInfo->getRealPath());
+    echo 'Add file: '.$file."\n";
+    $phar->addFile($fileInfo->getRealPath(), $file);
+}
+
+// Add bin/bootapp file
+echo "Add file: /bin/bootapp\n";
+$bootappContent = file_get_contents(__DIR__.'/bin/bootapp');
+$bootappContent = str_replace("#!/usr/bin/env php\n", '', $bootappContent);
+$bootappContent = str_replace('{{version}}', $version, $bootappContent);
+$bootappContent = str_replace('__FILE__', 'str_replace("phar://", "", Phar::running())', $bootappContent);
+$phar->addFromString('bin/bootapp', $bootappContent);
+
+$stub = <<<STUB
+#!/usr/bin/env php
+<?php
+Phar::mapPhar('{$pharName}');
+require 'phar://{$pharName}/bin/bootapp';
+__HALT_COMPILER();
+STUB;
+
+$phar->setStub($stub);
+$phar->stopBuffering();
+unset($phar);
+
+if (array_key_exists('v', $opt)) {
+    file_put_contents($manifest, json_encode(array_merge($manifestArray, [
+        [
+            'name'    => $pharName,
+            'sha1'    => sha1_file($pharFile),
+            'url'     => 'https://github.com/yejune/bootapp/blob/'.$version.'/bootapp.phar?raw=true',
+            'version' => $version
+        ]
+    ])));
+    shell_exec('git commit -a -m '.$version);
+    shell_exec('git tag '.$version);
+}
+echo "$pharName ".$version." was created successfully.\n";
+
+function versionup($version, $type)
+{
+    if (1 === preg_match('#(?P<major>[\d]+)\.(?P<minor>[\d]+)\.(?P<patch>[\d]+)#', $version, $match)) {
+        switch ($type) {
+            case 'major':
+                $match['major']++;
+                $match['minor'] = '0';
+                $match['patch'] = '0';
+                break;
+            case 'minor':
+                $match['minor']++;
+                $match['patch'] = '0';
+                break;
+            case 'patch':
+            default:
+                $match['patch']++;
+                break;
+        }
+
+        return $match['major'].'.'.$match['minor'].'.'.$match['patch'];
+    }
+
+    throw new \RuntimeException('version number did not pass validation.');
+}
