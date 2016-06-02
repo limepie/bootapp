@@ -91,7 +91,7 @@ if (array_key_exists('v', $opt)) {
             'url'     => 'https://github.com/yejune/bootapp/blob/'.$version.'/bootapp.phar?raw=true',
             'version' => $version
         ]
-    ])));
+    ]), JSON_PRETTY_PRINT));
     shell_exec('git commit -a -m '.$version);
     shell_exec('git tag '.$version);
 }
