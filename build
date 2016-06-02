@@ -21,7 +21,7 @@ if ($count >= 0 && true === isset($manifestArray[$count])) {
 
 if (array_key_exists('v', $opt)) {
     $vtype = 'patch';
-    if(true === in_array($opt['v'], 'major', 'minor', 'patch')) {
+    if(true === in_array($opt['v'], ['major', 'minor', 'patch'])) {
         $vtype = $opt['v'];
     }
     $version = versionup($version, $vtype);
