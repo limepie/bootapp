@@ -38,13 +38,14 @@ $application->add(new \Bootapp\Migration\Migrate());
 $application->add(new \Bootapp\Migration\Create());
 $application->add(new \Bootapp\Migration\Rollback());
 $application->add(new \Bootapp\Migration\Status());
-//$application->add(new \Bootapp\Migration\SeedCreate());
-//$application->add(new \Bootapp\Migration\SeedRun());
+
+/*
 $application->add(new \Bootapp\Ps());
 $application->add(new \Bootapp\Up());
 $application->add(new \Bootapp\Down());
 $application->add(new \Bootapp\Ssh());
 $application->add(new \Bootapp\Host());
+*/
 $application->add(new \Bootapp\Selfupdate());
 
 $application->add(new \Bootapp\Docker\Composer\Update());
@@ -72,7 +73,6 @@ $application->add(new \Bootapp\Project\Create());
 $application->setCatchExceptions(false);
 try {
     $output = new Symfony\Component\Console\Output\ConsoleOutput();
-
 
     if ($output->getVerbosity() == 16) {
     } else {
