@@ -69,6 +69,18 @@ class Up extends \Bootapp\Command
     }
 
     /**
+     * @param $projectName
+     * @param array          $environments
+     */
+    private function setElasticMq($projectName)
+    {
+        $template = file_get_contents(getcwd().'/.docker/elasticmq/custom.conf.tmpl');
+        $php      = strtr($template, ['{{host}}' => $projectName.'_elasticmq']);
+
+        file_put_contents(getcwd().'/.docker/elasticmq/custom.conf', $php);
+    }
+
+    /**
      * @param string $projectName
      * @param array  $config
      */
@@ -160,7 +172,7 @@ class Up extends \Bootapp\Command
                 $compose['services'][$projectName.'_nginx'] = array_merge([
                     'links'        => [$projectName.'_'.'php'],
                     'volumes_from' => [$projectName.'_'.'application'],
-                    'volumes'      => ['./var/log:/var/log/nginx']
+                    'volumes'      => ['./var/log/nginx:/var/log/nginx']
                 ], $nginx);
             }
         }
@@ -210,7 +222,7 @@ class Up extends \Bootapp\Command
                     'build'        => './.docker/php',
                     'expose'       => ['9000'],
                     'volumes_from' => [$projectName.'_'.'application'],
-                    'volumes'      => ['./var/log:/var/log']
+                    'volumes'      => ['./var/log/php:/var/log']
                 ], $php);
 
                 if ($servicesNames) {
@@ -345,10 +357,17 @@ class Up extends \Bootapp\Command
                 $serverConfig = $this->getNginxServerConfig($stage);
                 $this->setNginxVhost($safeProjectName, $serverConfig);
                 $this->setNginxDockerfile($safeProjectName);
+            }
+
+            if (true === isset($config['services']['php'])) {
                 $this->setPhpFpmPool($safeProjectName, [
                     'PROJECT_NAME' => $safeProjectName,
                     'STAGE_NAME'   => $stageName
                 ]);
+            }
+
+            if (true === isset($config['services']['elasticmq'])) {
+                $this->setElasticMq($safeProjectName);
             }
 
             $stage = array_merge_recursive(['services' => $config['services']], $stage);
