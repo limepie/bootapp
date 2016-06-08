@@ -314,16 +314,6 @@ class Up extends \Bootapp\Command
             $this->writeln('<info>Config</info>');
             $this->command('sudo -v');
 
-            if (false === is_dir(getcwd().'/.docker/')) {
-                $this->copyDir('phar://bootapp.phar/src/Dockerfiles/', getcwd().'/.docker/');
-            }
-
-            if (false === is_dir(getcwd().'/.template/')) {
-                //mkdir(getcwd().'/.template', 0777);
-                $this->command('mkdir '.getcwd().'/.template');
-                $this->command('chmod 777 '.getcwd().'/.template');
-            }
-
             $stageName       = 'local'; //$this->input->getArgument('environment');
             $config          = parent::getConfigFile($stageName);
             $machineName     = $config['machine'];
@@ -333,6 +323,16 @@ class Up extends \Bootapp\Command
             $safeMachineName = str_replace(['.', '-'], '', strtolower($machineName));
 
             $serverConfig = [];
+
+            if (false === is_dir(getcwd().'/.docker/')) {
+                $this->copyDir('phar://bootapp.phar/src/Dockerfiles/', getcwd().'/.docker/');
+            }
+
+            if (false === is_dir(getcwd().'/.template/')) {
+                //mkdir(getcwd().'/.template', 0777);
+                $this->command('mkdir '.getcwd().'/.template');
+                $this->command('chmod 777 '.getcwd().'/.template');
+            }
         }
 
         // brew, docker, vbox, docker-machine, docker-compose 설치 확인
