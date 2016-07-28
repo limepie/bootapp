@@ -1,0 +1,24 @@
+{
+  "name": "peanut/bootapp",
+  "require": {
+    "php": ">=5.5.9",
+    "symfony/process": "^3.1",
+    "symfony/finder": "^3.1",
+    "symfony/yaml": "^3.1",
+    "react/child-process": "^0.4.0",
+    "mkraemer/react-pcntl": "^2.1",
+    "herrera-io/phar-update": "^2.0",
+    "peanut/console": "dev-master"
+  },
+  "autoload": {
+      "psr-4": {
+          "App\\": "app/"
+      },
+      "exclude-from-classmap": [
+          "/tests/"
+      ]
+  },
+  "repositories": {
+     "packagist": { "url": "https://packagist.org", "type": "composer" }
+  }
+}
