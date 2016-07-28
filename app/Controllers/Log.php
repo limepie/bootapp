@@ -25,7 +25,6 @@ class Log extends Command
     {
         $name = $app->getArgument('container name');
         $this->initMachine();
-        echo PHP_EOL;
         $this->dockerLog($name);
     }
 
@@ -42,6 +41,8 @@ class Log extends Command
             $containerName
         ];
 
+        echo 'command | ';
+        echo \Peanut\Console\Color::text(implode(' ', $command), 'white').PHP_EOL.PHP_EOL;
         echo $this->process($command, ['print' => false]);
     }
 }

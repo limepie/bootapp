@@ -29,7 +29,6 @@ class Rm extends Command
         $force = $app->getOption('force');
 
         $this->initMachine();
-        echo PHP_EOL;
         $this->dockerRm($name, $force);
     }
 
@@ -52,6 +51,8 @@ class Rm extends Command
 
         $command[] = $containerName;
 
+        echo 'command | ';
+        echo \Peanut\Console\Color::text(implode(' ', $command), 'white').PHP_EOL.PHP_EOL;
         $this->process($command, ['print' => true]);
     }
 }
