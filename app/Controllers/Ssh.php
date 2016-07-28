@@ -15,8 +15,7 @@ class Ssh extends Command
     public function configuration(\Peanut\Console\Application $app)
     {
         $app->argument('container name');
-        $app->argument('command', false);
-        $app->option('force', ['require' => false, 'alias' => 'f', 'value' => false]);
+        $app->all();
     }
 
     /**
@@ -26,12 +25,9 @@ class Ssh extends Command
     public function exec(\Peanut\Console\Application $app, array $config)
     {
         $name    = $app->getArgument('container name');
-        $command = $app->getArgument('command');
+        $command = $app->getArgument('*');
 
-        $config = $this->getConfig();
-        $this->initMachine($config);
-        echo PHP_EOL;
-
+        $this->initMachine();
         $this->dockerSsh($name, $command);
     }
 
@@ -54,8 +50,9 @@ class Ssh extends Command
             $containerName,
             $cmd
         ];
-//        $command[] = '> `tty`';
 
-        $this->process($command, ['tty' => true]);
+        echo 'command | ';
+        echo \Peanut\Console\Color::text(implode(' ', $command), 'white').PHP_EOL.PHP_EOL;
+        $this->process($command, ['print' => false, 'tty' => true]);
     }
 }
