@@ -442,8 +442,6 @@ trait Run
 
                 $command[] = '--name='.$service['name'];
 
-                print_r($service['labels']);
-
                 if (true === isset($service['labels'])) {
                     foreach ($service['labels'] as $labelName => $labelValue) {
                         $command[] = '--label '.$labelName.'='.$labelValue;
