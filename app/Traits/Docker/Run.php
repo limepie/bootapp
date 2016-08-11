@@ -63,7 +63,7 @@ trait Run
     /**
      * @param $stageName
      */
-    public function Containers()
+    public function Containers($mode)
     {
         $projectName = $this->getProjectName();
 
@@ -291,7 +291,7 @@ trait Run
 
         // create or run
         {
-            if ('attach' == $this->mode) {
+            if ('attach' == $mode) {
                 echo \Peanut\Console\Color::text('create  | ', 'white');
             } else {
                 echo \Peanut\Console\Color::text('run     | ', 'white');
@@ -302,7 +302,7 @@ trait Run
             foreach ($compose['services'] as $serviceName => $service) {
                 $command = [];
 
-                if ('attach' == $this->mode) {
+                if ('attach' == $mode) {
                     $command[] = 'docker create';
                     $command[] = '-a STDIN';
                     $command[] = '-a STDOUT';
@@ -476,7 +476,7 @@ trait Run
 //print_r($runCommands);
         // start and attach
         {
-            if ('attach' == $this->mode) {
+            if ('attach' == $mode) {
                 echo \Peanut\Console\Color::text('start   | ', 'white');
 
                 foreach ($compose['services'] as $serviceName => $service) {

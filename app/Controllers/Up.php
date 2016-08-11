@@ -19,10 +19,8 @@ class Up extends Command
     /**
      * @var string
      */
-    public $mode = 'detach';
-
     /**
-     * @var string
+     * @param $mode
      */
     public $command = 'up';
     /**
@@ -40,16 +38,16 @@ class Up extends Command
     function exec(\Peanut\Console\Application $app, array $config)
     {
         $this->process('sudo -v', ['print' => false]);
-        $this->mode = $app->getOption('attach') ? 'attach' : $this->mode;
+        $mode = $app->getOption('attach') ? 'attach' : 'detach';
 
-        if ('attach' == $this->mode) {
+        if ('attach' == $mode) {
             if (false === function_exists('pcntl_fork')) {
-                $this->mode = 'detach';
+                $mode = 'detach';
                 echo \Peanut\Console\Color::text('attach mode is not support, start detach mode', 'red', '').PHP_EOL;
             }
         }
 
-        if ('attach' == $this->mode) {
+        if ('attach' == $mode) {
             $this->loop = \React\EventLoop\Factory::create();
             try {
                 {
@@ -84,17 +82,17 @@ class Up extends Command
                 throw new \Peanut\Console\Exception($e);
             }
         } else {
-            $this->run();
+            $this->run($mode);
             echo PHP_EOL;
             $this->dockerLs();
         }
     }
 
-    function run()
+    function run($mode)
     {
         $this->initMachine();
         $this->dockerComposeFileGenerate();
-        $this->dockerRunContainers();
+        $this->dockerRunContainers($mode);
         $this->setRoute();
         $this->setHost();
     }

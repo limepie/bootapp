@@ -14,6 +14,11 @@ class Command extends \Peanut\Console\Command
      * @var string
      */
     public $color = '';
+
+    /**
+     * @var mixed
+     */
+    public $verbose = false;
     /**
      * @param $command
      * @param $option
@@ -36,11 +41,16 @@ class Command extends \Peanut\Console\Command
             $tty = false;
         }
 
-        if (true === isset($option['print'])) {
-            $print = $option['print'];
-        } else {
+        if ($this->verbose) {
             $print = true;
-            $this->message($command);
+            $this->message('IN >> '.$command);
+        } else {
+            if (true === isset($option['print'])) {
+                $print = $option['print'];
+            } else {
+                $print = true;
+                $this->message($command);
+            }
         }
 
         $process = new Process($command);
@@ -256,7 +266,8 @@ class Command extends \Peanut\Console\Command
      */
     public function execute(\Peanut\Console\Application $app)
     {
-        $this->config = $this->getConfig();
+        $this->config  = $this->getConfig();
+        $this->verbose = $app->getOption('verbose');
 
         return $this->exec($app, $this->config);
     }

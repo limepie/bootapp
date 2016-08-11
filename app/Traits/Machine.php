@@ -219,7 +219,6 @@ trait Machine
      */
     public function initMachine()
     {
-        return;
         $machineStatus = $this->getMachineStatus();
         $this->message('docker  | machine status "'.$machineStatus.'"');
 
@@ -335,12 +334,13 @@ trait Machine
         $this->checkMachineInfo();
 
         $this->setSharedFolder();
-        $this->setMount();
         $status = $this->getMachineStatus();
 
         if ('stopped' === $status) {
             $this->startMachine();
         }
+
+        $this->setMount();
 
         $this->setDocerHost();
 
