@@ -60,6 +60,24 @@ trait Compose
                 $compose['services'] = [];
 
                 foreach ($result as $serviceName) {
+                    if (false === isset($services[$serviceName]['labels'])) {
+                        $services[$serviceName]['labels'] = [];
+                    }
+
+                    $services[$serviceName]['labels'] += [
+                        'com.docker.bootapp.service' => $serviceName,
+                        'com.docker.bootapp.name'    => $this->getContainerName($serviceName),
+                        'com.docker.bootapp.project' => $this->getProjectName()
+                    ];
+
+                    if (true === isset($services[$serviceName]['environment']['DOMAIN'])) {
+                        $services[$serviceName]['labels']['com.docker.bootapp.domain'] = $services[$serviceName]['environment']['DOMAIN'];
+                    }
+
+                    if (true === isset($services[$serviceName]['container_name'])) {
+                        $services[$serviceName]['container_name'] = $this->getContainerName($serviceName);
+                    }
+
                     $compose['services'][$serviceName] = $services[$serviceName];
                 }
             }

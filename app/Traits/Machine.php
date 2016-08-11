@@ -115,7 +115,8 @@ trait Machine
                 $env = $this->process($command, ['print' => false]);
 
 //Error checking and/or regenerating the certs
-                if (false !== strpos($env->toString(), 'regenerate-certs')) {
+                if (false !== strpos($env->toString(), 'regenerate-certs')
+                    || false !== strpos($env->toString(), 'Could not read CA certificate')) {
                     $this->certsDockerMachine();
                 } elseif (false === strpos($env->toString(), 'Error checking TLS connection:')) {
                     break;
@@ -213,8 +214,12 @@ trait Machine
         return strtolower($this->process($command, ['print' => false])->toString());
     }
 
+    /**
+     * @return null
+     */
     public function initMachine()
     {
+        return;
         $machineStatus = $this->getMachineStatus();
         $this->message('docker  | machine status "'.$machineStatus.'"');
 
@@ -327,14 +332,55 @@ trait Machine
      */
     public function startDockerMachine()
     {
-        $machineName = $this->getMachineName();
-        // 검사할것 없이 /Volumes만 mount하면 됨, 딱한번만 하면 됨
-        list($first, $second, $third) = explode(DIRECTORY_SEPARATOR, getcwd(), 3);
-        $path                         = implode(DIRECTORY_SEPARATOR, [$first, $second]);
-
         $this->checkMachineInfo();
 
-        if (false === in_array($second, array_keys($this->sharedFolders))) {
+        $this->setSharedFolder();
+        $this->setMount();
+        $status = $this->getMachineStatus();
+
+        if ('stopped' === $status) {
+            $this->startMachine();
+        }
+
+        $this->setDocerHost();
+
+        echo 'docker  | engine ready .';
+        $i = 0;
+
+        while (true) {
+            $i++;
+
+            if (10 == $i) {
+                throw new \Peanut\Console\Exception('Please check your docker connection and try again.');
+            }
+
+            $command = [
+                'docker',
+                'info',
+                '2>&1'
+            ];
+
+            $tmp = $this->process($command, ['print' => false])->toString();
+            echo '.';
+
+            if (1 === preg_match('#^Containers#', $tmp)) {
+                //sleep(1);
+                echo ' ok'.PHP_EOL;
+                break;
+            }
+
+            sleep(1);
+        }
+    }
+
+    public function setSharedFolder()
+    {
+        $machineName = $this->getMachineName();
+        // 검사할것 없이 /Volumes만 mount하면 됨, 딱한번만 하면 됨
+        list($first, $name, $third) = explode(DIRECTORY_SEPARATOR, getcwd(), 3);
+        $path                       = implode(DIRECTORY_SEPARATOR, [$first, $name]);
+
+        if (false === in_array($name, array_keys($this->sharedFolders))) {
             $status = $this->getMachineStatus();
 
             if ('running' == $status) {
@@ -379,50 +425,22 @@ trait Machine
                 'add',
                 $machineName,
                 '--name',
-                $second,
+                $name,
                 '--hostpath',
                 $path,
                 '--automount'
             ];
             $this->process($command, ['print' => false]);
         }
+    }
 
-        $status = $this->getMachineStatus();
+    public function setMount()
+    {
+        $machineName                = $this->getMachineName();
+        list($first, $name, $third) = explode(DIRECTORY_SEPARATOR, getcwd(), 3);
+        $path                       = implode(DIRECTORY_SEPARATOR, [$first, $name]);
 
-        if ('stopped' === $status) {
-            $this->startMachine();
-        }
-
-        $this->setDocerHost();
-
-        echo 'docker  | engine ready .';
-        $i = 0;
-
-        while (true) {
-            $i++;
-
-            if (10 == $i) {
-                throw new \Peanut\Console\Exception('Please check your docker connection and try again.');
-            }
-
-            $command = [
-                'docker',
-                'info',
-                '2>&1'
-            ];
-
-            $tmp = $this->process($command, ['print' => false])->toString();
-            echo '.';
-
-            if (1 === preg_match('#^Containers#', $tmp)) {
-                //sleep(1);
-                echo ' ok'.PHP_EOL;
-                break;
-            }
-
-            sleep(1);
-        }
-
+/*
         $command = [
             'docker-machine',
             'ssh',
@@ -448,10 +466,91 @@ trait Machine
             'vboxsf',
             '-o',
             'uid=0,gid=0',
-            $second,
+            $name,
             $path,
             '"'
         ];
+        $this->process($command, ['print' => false]);
+*/
+        $command = [
+            'docker-machine',
+            'ssh',
+            $machineName,
+            'echo',
+            "'",
+            '"',
+            'if mount|grep '.$path.' > /dev/null 2>&1; then',
+            PHP_EOL,
+            'umount',
+            $path,
+            PHP_EOL,
+            'fi',
+            '"',
+            '|',
+            'sudo',
+            'tee',
+            '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
+            "'"
+        ];
+
+        $this->process($command, ['print' => false]);
+
+        $command = [
+            'docker-machine',
+            'ssh',
+            $machineName,
+            'echo',
+            "'",
+            '"',
+            'mkdir',
+            '-p',
+            $path,
+            '"',
+            '|',
+            'sudo',
+            'tee',
+            '-a',
+            '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
+            "'"
+        ];
+        $this->process($command, ['print' => false]);
+        $command = [
+            'docker-machine',
+            'ssh',
+            $machineName,
+            'echo',
+            "'",
+            '"',
+            'mount',
+            '-t',
+            'vboxsf',
+            '-o',
+//            'umask=0022,gid=50,uid=1000',
+            'uid=1000,gid=50,dmode=0777,fmode=0777',
+            //            'uid=`id -u docker`,gid=`id -g docker`,dmode=0777,fmode=0777',
+            $name,
+            $path,
+            '"',
+            '|',
+            'sudo',
+            'tee',
+            '-a',
+            '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
+            "'"
+        ];
+        $this->process($command, ['print' => false]);
+
+        $command = [
+            'docker-machine',
+            'ssh',
+            $machineName,
+            "'",
+            'sudo',
+            'sh',
+            '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
+            "'"
+        ];
+
         $this->process($command, ['print' => false]);
     }
 

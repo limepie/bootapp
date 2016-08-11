@@ -61,8 +61,8 @@ class Task extends Command
         $command[] = 'sh -c';
         $command[] = '"';
 
-        if (true === isset($task['workdir'])) {
-            $command[] = 'cd '.$task['workdir'];
+        if (true === isset($task['working_dir'])) {
+            $command[] = 'cd '.$task['working_dir'];
             $command[] = '&&';
         }
 

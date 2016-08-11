@@ -14,6 +14,7 @@ class Log extends Command
      */
     public function configuration(\Peanut\Console\Application $app)
     {
+        $app->option('follow', ['require' => false, 'alias' => 'f', 'value' => false]);
         $app->argument('container name');
     }
 
@@ -23,26 +24,34 @@ class Log extends Command
      */
     public function exec(\Peanut\Console\Application $app, array $config)
     {
-        $name = $app->getArgument('container name');
+        $isFollow = $app->getOption('follow');
+        $name     = $app->getArgument('container name');
         $this->initMachine();
-        $this->dockerLog($name);
+        $this->dockerLog($name, $isFollow);
     }
 
     /**
      * @param $name
      */
-    public function dockerLog($name)
+    public function dockerLog($name, $isFollow = false)
     {
         $containerName = $this->getContainerName($name);
 
         $command = [
             'docker',
-            'logs',
-            $containerName
+            'logs'
         ];
+
+        if ($isFollow) {
+            $command[] = '-f';
+        }
+
+        $command[] = $containerName;
 
         echo 'command | ';
         echo \Peanut\Console\Color::text(implode(' ', $command), 'white').PHP_EOL.PHP_EOL;
-        echo $this->process($command, ['print' => false]);
+
+        //echo shell_exec(implode(' ', $command));
+        $this->process($command, ['print' => true]);
     }
 }
