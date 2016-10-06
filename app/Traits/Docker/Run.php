@@ -65,6 +65,7 @@ trait Run
      */
     public function Containers($mode)
     {
+        $machineName = $this->getMachineName();
         $projectName = $this->getProjectName();
 
         if (!$projectName) {
@@ -288,6 +289,48 @@ trait Run
 
                     if ($subnet) {
                         $networkCreateCommand[] = '--subnet='.implode(' --subnet=', $subnet);
+                    } else {
+
+                        $subnetFile = $this->process('echo $HOME', ['print' => false])->toString().'/.docker/docker-machine-subnet.yaml';
+
+                        if (false === is_file($subnetFile)) {
+                            $this->process('touch '.$subnetFile, ['print' => false]);
+                        }
+
+                        $subnets = \App\Helpers\Yaml::parseFile($subnetFile);
+
+                        if (false === is_array($subnets)) {
+                            $subnets = [];
+                        }
+
+                        if (true === isset($subnets[$machineName][$projectName])) {
+                            $subnet = $subnets[$machineName][$projectName];
+                        } else {
+                            $bridge = $this->process("docker network inspect --format='{{range .IPAM.Config}}{{.Subnet}}{{end}}' bridge", ['print' => false])->toString();
+
+                            $subnetIps = [];
+                            foreach($subnets as $machines) {
+                                foreach($machines as $projectIp) {
+                                    $subnetIps[] = $projectIp;
+                                }
+                            }
+
+                            while (1) {
+                                $subnet = '172.'.rand(0, 255).'.0.0/16';
+
+                                if ($subnet == $bridge) {
+                                    continue;
+                                }
+
+                                if (false == in_array($subnet, $subnetIps)) {
+                                    break;
+                                }
+                            }
+                            $subnets[$machineName][$projectName] = $subnet;
+                            \App\Helpers\Yaml::dumpFile($subnetFile, $subnets);
+                        }
+                        $networkCreateCommand[] = '--subnet='.$subnet;
+
                     }
 
                     $networkCreateCommand[] = $networkName;
