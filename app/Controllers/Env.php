@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Controllers;
 
 class Env extends Command
 {
     use \App\Traits\Machine;
+
     /**
      * @var string
      */
@@ -12,7 +14,10 @@ class Env extends Command
     /**
      * @param \Peanut\Console\Application $app
      */
-    public function configuration(\Peanut\Console\Application $app) {}
+    public function configuration(\Peanut\Console\Application $app)
+    {
+    }
+
     /**
      * @param \Peanut\Console\Application $app
      * @param array                       $config

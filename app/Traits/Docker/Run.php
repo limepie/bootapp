@@ -102,7 +102,7 @@ trait Run
         echo \Peanut\Console\Color::text('stage   | ', 'white').$stageName.PHP_EOL;
 
         $isBuild = false;
-
+        $isPull  = false;
         // name setting
         {
             foreach ($compose['services'] as $serviceName => &$service) {
@@ -117,11 +117,35 @@ trait Run
 
                 if (true === isset($service['build'])) {
                     $isBuild = true;
+                } elseif (true === isset($service['image'])) {
+                    $isPull = true;
                 }
             }
 
             // break the reference with the last element
             unset($service);
+        }
+
+        // pull
+        {
+            if ($isPull) {
+                echo \Peanut\Console\Color::text('pull    | ', 'white');
+
+                foreach ($compose['services'] as $serviceName => $service) {
+                    if (true === isset($service['image'])) {
+                        $command = [
+                            'docker',
+                            'pull',
+                            $service['image']
+                        ];
+                        //$this->message('build '.$service['name']);
+                        echo $service['org_name'].' ';
+                        $this->process($command, ['print' => false]);
+                    }
+                }
+
+                echo PHP_EOL;
+            }
         }
 
         // build
@@ -154,7 +178,7 @@ trait Run
 
                         //$this->message('build '.$service['name']);
                         echo $service['org_name'].' ';
-                        $this->process(implode(' ', $buildOpts), ['print' => true]);
+                        $this->process($buildOpts, ['print' => true]);
                     }
                 }
 

@@ -53,6 +53,9 @@ try {
     $app->command(new \App\Controllers\Task());
     $app->command(new \App\Controllers\Env());
 
+    $app->command(new \App\Controllers\Pause());
+    $app->command(new \App\Controllers\Unpause());
+
     $app->match();
 } catch(\Peanut\Console\Exception $e) {
     print_r($e->getMessage());
