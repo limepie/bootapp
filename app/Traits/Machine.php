@@ -687,7 +687,7 @@ trait Machine
                 'sed',
                 '-i',
                 '-e',
-                '"/'.$ip.'/d"',
+                '"/^'.$ip.' /d"',
                 '/etc/hosts',
                 '2>&1'
             ];
@@ -702,7 +702,7 @@ trait Machine
                 'sed',
                 '-i',
                 '-e',
-                '"/'.$domain.'/d"',
+                '"/^'.$domain.' /d"',
                 '/etc/hosts',
                 '2>&1'
             ];
