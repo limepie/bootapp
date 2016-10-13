@@ -649,17 +649,21 @@ trait Machine
 
         $inspectList = $this->process($command, ['print' => false])->toArray();
 
+        $machineName = $this->getMachineName();
+        $projectName = $this->getProjectName();
+
+        $id = $machineName.'_'.$projectName;
         $command = [
             'sudo',
             'sed',
             '-i',
             '-e',
-            '"/## '.$this->uuid.'/d"',
+            '"/## '.$id.'/d"',
             '/etc/hosts'
         ];
 
 //echo PHP_EOL.implode(' ', $command).PHP_EOL.PHP_EOL.PHP_EOL;
-        //$this->process($command, ['print' => false]);
+        $this->process($command, ['print' => false]);
 
         $domainList = [];
 
@@ -702,7 +706,7 @@ trait Machine
                 'sed',
                 '-i',
                 '-e',
-                '"/^'.$domain.' /d"',
+                '"/ '.$domain.' /d"',
                 '/etc/hosts',
                 '2>&1'
             ];
@@ -723,7 +727,7 @@ trait Machine
                 'sh',
                 '-c',
                 '-e',
-                '"echo \''.$str.'          ## '.$this->uuid.'\' >> /etc/hosts";'
+                '"echo \''.$str.'          ## '.$id.'\' >> /etc/hosts";'
             ];
             //echo PHP_EOL.implode(' ', $command).PHP_EOL;
 

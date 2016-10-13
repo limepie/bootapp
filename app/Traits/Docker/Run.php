@@ -63,7 +63,7 @@ trait Run
     /**
      * @param $stageName
      */
-    public function Containers($mode)
+    public function Containers($mode, $isPull)
     {
         $machineName = $this->getMachineName();
         $projectName = $this->getProjectName();
@@ -102,8 +102,8 @@ trait Run
         echo \Peanut\Console\Color::text('project | ', 'white').$projectName.PHP_EOL;
         echo \Peanut\Console\Color::text('stage   | ', 'white').$stageName.PHP_EOL;
 
-        $isBuild = false;
-        $isPull  = false;
+        $checkBuild = false;
+        $checkPull  = false;
         // name setting
         {
             foreach ($compose['services'] as $serviceName => &$service) {
@@ -117,9 +117,9 @@ trait Run
                 $service['name']     = $this->getContainerName($name);
 
                 if (true === isset($service['build'])) {
-                    $isBuild = true;
+                    $checkBuild = true;
                 } elseif (true === isset($service['image'])) {
-                    $isPull = true;
+                    $checkPull = true;
                 }
             }
 
@@ -129,7 +129,7 @@ trait Run
 
         // pull
         {
-            if ($isPull) {
+            if ($checkPull && $isPull) {
                 echo \Peanut\Console\Color::text('pull    | ', 'white');
 
                 foreach ($compose['services'] as $serviceName => $service) {
@@ -151,7 +151,7 @@ trait Run
 
         // build
         {
-            if ($isBuild) {
+            if ($checkBuild) {
                 echo \Peanut\Console\Color::text('build   | ', 'white');
 
                 foreach ($compose['services'] as $serviceName => $service) {
@@ -511,12 +511,12 @@ trait Run
 
                 if (true === isset($service['labels'])) {
                     foreach ($service['labels'] as $labelName => $labelValue) {
-                        $command[] = '--label '.$labelName.'='.$labelValue;
+                        $command[] = '--label '.$labelName.'="'.$labelValue.'"';
                     }
                 }
 
                 if (true === isset($service['environment']['DOMAIN'])) {
-                    $command[] = '--label com.docker.bootapp.domain='.$service['environment']['DOMAIN'];
+                    $command[] = '--label com.docker.bootapp.domain="'.$service['environment']['DOMAIN'].'"';
                 }
 
                 if (true === isset($service['image'])) {
@@ -532,6 +532,7 @@ trait Run
                 }
 
                 $runCommands[] = implode(' ', $command);
+
                 $this->process($command, ['print' => false]); // create
 
                 echo $service['org_name'].' ';
@@ -540,7 +541,6 @@ trait Run
             echo PHP_EOL;
         }
 
-//print_r($runCommands);
         // start and attach
         {
             if ('attach' == $mode) {
@@ -581,3 +581,4 @@ trait Run
         }
     }
 }
+
