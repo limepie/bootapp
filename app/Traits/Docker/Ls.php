@@ -9,6 +9,7 @@ trait Ls
     public function dockerLs($isAll = false)
     {
 //--filter "label=com.docker.bootapp.project="
+        $stageName   = $this->getStageName();
 
         $command = [
             'docker',
@@ -32,7 +33,9 @@ trait Ls
             $ilist       = [];
             $serviceList = [];
 
-            foreach ($this->config['services'] as $key => $value) {
+            $stageService = isset($this->config['stages'][$stageName]['services']) ? $this->config['stages'][$stageName]['services'] : [];
+
+            foreach ($this->config['services'] + $stageService as $key => $value) {
                 $serviceList[] = $this->getContainerName($key);
             }
 

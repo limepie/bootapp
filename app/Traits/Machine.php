@@ -634,9 +634,13 @@ trait Machine
      */
     public function setHost()
     {
+        $stageName   = $this->getStageName();
+
         $serviceList = [];
 
-        foreach ($this->config['services'] as $key => $value) {
+        $stageService = isset($this->config['stages'][$stageName]['services']) ? $this->config['stages'][$stageName]['services'] : [];
+
+        foreach ($this->config['services'] + $stageService as $key => $value) {
             $serviceList[] = $this->getContainerName($key);
         }
 
