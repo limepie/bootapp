@@ -808,21 +808,18 @@ trait Machine
         }
 
         if($domainList) {
-            $exists = false;
-
             $SSL_DIR=getcwd()."/var/certs";
             shell_exec('mkdir -p '.$SSL_DIR);
+            $certs = [];
             foreach ($domainList as $ip => $domain) {
                 $sslname = $SSL_DIR.'/'.$domain;
 
-                if(file_exists($sslname.'.key')) {
-                    $exists = true;
+                if(false === file_exists($sslname.'.key')) {
                 }
-                $this->message(\Peanut\Console\Color::text('cert    | ', 'white').'certificate '.$domain);
-                $this->message(\Peanut\Console\Color::text('        | ', 'white').'ssl_certificate        '.$sslname.'.cert');
-                $this->message(\Peanut\Console\Color::text('        | ', 'white').'ssl_certificate_key    '.$sslname.'.key');
-                $this->message(\Peanut\Console\Color::text('        | ', 'white').'open /Applications/Utilities/Keychain\ Access.app '.$sslname.'.cert');
-
+                    $certs[] = './var/certs/'.$domain.'.crt';
+                $this->message(\Peanut\Console\Color::text('cert    | ', 'white').'domain '.$domain);
+                $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert   ./var/certs/'.$domain.'.crt');
+                $this->message(\Peanut\Console\Color::text('        | ', 'white').'key    ./var/certs/'.$domain.'.key');
                 $command = [
                     'openssl',
                     'genrsa',
@@ -840,7 +837,7 @@ trait Machine
                     '-key',
                     $sslname.'.key',
                     '-out',
-                    $sslname.'.cert',
+                    $sslname.'.crt',
                     '-days',
                     '3650',
                     '-subj',
@@ -849,9 +846,16 @@ trait Machine
                 $this->process($command, ['print' => false]);
             }
 
-            if(false === $exists) {
+            if(count($certs)) {
+                $this->process('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certs), ['print' => false, 'tty' => true]);
                 $this->process('open /Applications/Utilities/Keychain\ Access.app', ['print' => false, 'tty' => true]);
+            } else {
+
             }
+
+            $this->message();
+            $this->message('# Run this command to configure your ssl certificate:');
+            $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certs).'', 'white'));
         }
     }
 
