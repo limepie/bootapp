@@ -227,6 +227,8 @@ trait Machine
         } elseif ('stopped' === $machineStatus) {
             $this->removeNetwork();
             $this->startDockerMachine();
+        } else if('paused' === $machineStatus) {
+            $this->resumeDockerMachine();
         } elseif ('saved' === $machineStatus) {
             $this->discardDockerMachine();
             $this->removeNetwork();
@@ -248,6 +250,19 @@ trait Machine
             throw new \Exception('Error checking TLS connection: Host is not running');
         }
 */
+    }
+
+    private function resumeDockerMachine()
+    {
+        $machineName = $this->getMachineName();
+
+        $command = [
+            'vboxmanage',
+            'controlvm',
+            $machineName,
+            'resume',
+        ];
+        $this->process($command, ['print' => true]);
     }
 
     private function discardDockerMachine()
