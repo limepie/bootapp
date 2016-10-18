@@ -95,5 +95,6 @@ class Up extends Command
         $this->dockerRunContainers($mode, $ispull);
         $this->setRoute();
         $this->setHost();
+        $this->setCert();
     }
 }

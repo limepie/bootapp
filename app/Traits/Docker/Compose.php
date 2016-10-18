@@ -54,7 +54,7 @@ trait Compose
                 try {
                     $result = \App\Helpers\Dependency::sort($links);
                 } catch (\Exception $e) {
-                    throw new \Console\Exception($e);
+                    throw new \Peanut\Console\Exception($e);
                 }
 
                 $compose['services'] = [];
@@ -72,6 +72,12 @@ trait Compose
 
                     if (true === isset($services[$serviceName]['environment']['DOMAIN'])) {
                         $services[$serviceName]['labels']['com.docker.bootapp.domain'] = $services[$serviceName]['environment']['DOMAIN'];
+
+                        if(false === strpos($services[$serviceName]['environment']['DOMAIN'], ' ')) {
+                            $services[$serviceName]['labels']['com.docker.bootapp.domain'] = $services[$serviceName]['environment']['DOMAIN'];
+                        } else {
+                            throw new \Peanut\Console\Exception('domain name not valid');
+                        }
                     }
 
                     if (true === isset($services[$serviceName]['container_name'])) {

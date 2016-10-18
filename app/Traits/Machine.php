@@ -753,4 +753,106 @@ trait Machine
             $this->process($command, ['print' => false]);
         }
     }
+
+
+    /**
+     * @param $config
+     */
+    public function setCert()
+    {
+        $stageName   = $this->getStageName();
+
+        $serviceList = [];
+
+        $stageService = isset($this->config['stages'][$stageName]['services']) ? $this->config['stages'][$stageName]['services'] : [];
+
+        foreach ($this->config['services'] + $stageService as $key => $value) {
+            $serviceList[] = $this->getContainerName($key);
+        }
+
+        $command = [
+            'docker',
+            'inspect',
+            '--format="name={{.Name}}&ip={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}&service={{index .Config.Labels \"com.docker.bootapp.service\"}}&id={{.Id}}&env={{json .Config.Env}}"',
+            '$(docker ps -q)'
+        ];
+
+        $inspectList = $this->process($command, ['print' => false])->toArray();
+
+        $machineName = $this->getMachineName();
+        $projectName = $this->getProjectName();
+
+        $id = $machineName.'_'.$projectName;
+
+
+        $domainList = [];
+
+        foreach ($inspectList as $str) {
+            parse_str($str, $b);
+
+            $envs = json_decode($b['env'], true);
+
+            $name = ltrim($b['name'], '/');
+
+            $env = [];
+            if (true === in_array($name, $serviceList)) {
+                foreach ($envs as $envstring) {
+                    list($key, $value) = explode('=', $envstring, 2);
+                    $env[$key] = $value;
+                }
+
+                if (isset($env['DOMAIN']) && isset($env['USE_SSL'])) {
+                    $domainList[$b['ip']] = $env['DOMAIN'];
+                }
+            }
+        }
+
+        if($domainList) {
+            $exists = false;
+
+            $SSL_DIR=getcwd()."/var/certs";
+            shell_exec('mkdir -p '.$SSL_DIR);
+            foreach ($domainList as $ip => $domain) {
+                $sslname = $SSL_DIR.'/'.$domain;
+
+                if(file_exists($sslname.'.key')) {
+                    $exists = true;
+                }
+                $this->message(\Peanut\Console\Color::text('cert    | ', 'white').'certificate '.$domain);
+                $this->message(\Peanut\Console\Color::text('        | ', 'white').'ssl_certificate        '.$sslname.'.cert');
+                $this->message(\Peanut\Console\Color::text('        | ', 'white').'ssl_certificate_key    '.$sslname.'.key');
+                $this->message(\Peanut\Console\Color::text('        | ', 'white').'open /Applications/Utilities/Keychain\ Access.app '.$sslname.'.cert');
+
+                $command = [
+                    'openssl',
+                    'genrsa',
+                    '-out',
+                    $sslname.'.key',
+                    '2048'
+                ];
+                $this->process($command, ['print' => false]);
+
+                $command = [
+                    'openssl',
+                    'req',
+                    '-new',
+                    '-x509',
+                    '-key',
+                    $sslname.'.key',
+                    '-out',
+                    $sslname.'.cert',
+                    '-days',
+                    '3650',
+                    '-subj',
+                    '/CN='.$domain
+                ];
+                $this->process($command, ['print' => false]);
+            }
+
+            if(false === $exists) {
+                $this->process('open /Applications/Utilities/Keychain\ Access.app', ['print' => false, 'tty' => true]);
+            }
+        }
+    }
+
 }
