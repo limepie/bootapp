@@ -811,51 +811,55 @@ trait Machine
             $SSL_DIR=getcwd()."/var/certs";
             shell_exec('mkdir -p '.$SSL_DIR);
             $certs = [];
+            $certsAll = [];
             foreach ($domainList as $ip => $domain) {
                 $sslname = $SSL_DIR.'/'.$domain;
 
-                if(false === file_exists($sslname.'.key')) {
-                }
-                    $certs[] = './var/certs/'.$domain.'.crt';
                 $this->message(\Peanut\Console\Color::text('cert    | ', 'white').'domain '.$domain);
-                $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert   ./var/certs/'.$domain.'.crt');
+                $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert   ./var/certs/'.$domain.'.cert');
                 $this->message(\Peanut\Console\Color::text('        | ', 'white').'key    ./var/certs/'.$domain.'.key');
-                $command = [
-                    'openssl',
-                    'genrsa',
-                    '-out',
-                    $sslname.'.key',
-                    '2048'
-                ];
-                $this->process($command, ['print' => false]);
 
-                $command = [
-                    'openssl',
-                    'req',
-                    '-new',
-                    '-x509',
-                    '-key',
-                    $sslname.'.key',
-                    '-out',
-                    $sslname.'.crt',
-                    '-days',
-                    '3650',
-                    '-subj',
-                    '/CN='.$domain
-                ];
-                $this->process($command, ['print' => false]);
+                if(false === file_exists($sslname.'.key')) {
+                    $certs[] = './var/certs/'.$domain.'.cert';
+
+                    $command = [
+                        'openssl',
+                        'genrsa',
+                        '-out',
+                        $sslname.'.key',
+                        '2048'
+                    ];
+                    $this->process($command, ['print' => false]);
+
+                    $command = [
+                        'openssl',
+                        'req',
+                        '-new',
+                        '-x509',
+                        '-key',
+                        $sslname.'.key',
+                        '-out',
+                        $sslname.'.cert',
+                        '-days',
+                        '3650',
+                        '-subj',
+                        '/CN='.$domain
+                    ];
+                    $this->process($command, ['print' => false]);
+                } else {}
+
+                $certsAll[] = './var/certs/'.$domain.'.cert';
             }
 
             if(count($certs)) {
                 $this->process('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certs), ['print' => false, 'tty' => true]);
                 $this->process('open /Applications/Utilities/Keychain\ Access.app', ['print' => false, 'tty' => true]);
             } else {
-
+                $this->message();
+                $this->message('# Run this command to configure your ssl certificate:');
+                $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certsAll).'', 'white'));
             }
 
-            $this->message();
-            $this->message('# Run this command to configure your ssl certificate:');
-            $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certs).'', 'white'));
         }
     }
 
