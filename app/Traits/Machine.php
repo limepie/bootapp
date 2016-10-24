@@ -809,6 +809,13 @@ trait Machine
 
         if($domainList) {
             $SSL_DIR=getcwd()."/var/certs";
+            if(false === is_dir(getcwd().'/var')) {
+                mkdir(getcwd().'/var');
+            }
+            if(false === is_dir(getcwd().'/var/certs')) {
+                mkdir(getcwd().'/var/certs');
+            }
+
             shell_exec('mkdir -p '.$SSL_DIR);
             $certs = [];
             $certsAll = [];
