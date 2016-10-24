@@ -310,8 +310,10 @@ trait Run
 
                             $subnetIps = [];
                             foreach($subnets as $machines) {
-                                foreach($machines as $projectIp) {
-                                    $subnetIps[] = $projectIp;
+                                if(true === is_array($machines)) {
+                                    foreach($machines as $projectIp) {
+                                        $subnetIps[] = $projectIp;
+                                    }
                                 }
                             }
 
@@ -423,6 +425,9 @@ trait Run
 
                 if (true === isset($service['environment'])) {
                     foreach ($service['environment'] as $key => $value) {
+                        if(true === is_array($value)) {
+                            $value = "'".json_encode($value, JSON_UNESCAPED_SLASHES)."'";
+                        }
                         $command[] = '-e '.$key.'='.escapeshellarg($value);
                     }
                 }

@@ -121,6 +121,23 @@ trait Compose
                 }
             }
 
+            {
+
+                foreach ($compose['services'] as $service_name => &$service) {
+                    if (true === isset($service['environment']) && $service['environment']) {
+                        foreach ($service['environment'] as $key => &$value) {
+                            if($key == 0 && is_null($value)) {
+                                unset($service['environment'][$key]);
+                            } elseif(true === is_array($value)) {
+                                $value = "'".json_encode($value, JSON_UNESCAPED_SLASHES)."'";
+                            }
+                        }
+                    } else {
+                        unset($service['environment']);
+                    }
+                }
+            }
+
             \App\Helpers\Yaml::dumpFile(getcwd().'/docker-compose.'.$stageName.'.yml', $compose);
         }
     }
