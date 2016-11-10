@@ -217,7 +217,7 @@ class Command extends \Peanut\Console\Command
     {
         // todo: 서로 다른 machine의 bridge network가 같은 대역 subnet일 경우 /etc/hosts/에 간섭이 일어나므로 수정할것
 
-//return 'bootapp-docker-machine';
+        //return 'bootapp-docker-machine';
 
         if (true === isset($this->config['machine_name'])) {
             return $this->config['machine_name'];
