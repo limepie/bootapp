@@ -33,7 +33,9 @@ class Dependency
     /**
      * @param $array
      */
-    public function __construct($array) {}
+    public function __construct($array)
+    {
+    }
     /**
      * @param array $elements
      */
@@ -54,7 +56,7 @@ class Dependency
         $this->elements[$element] = (object) [
             'id'           => $element,
             'dependencies' => (array) $dependencies,
-            'visited'      => false
+            'visited'      => false,
         ];
     }
 

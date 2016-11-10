@@ -39,12 +39,11 @@ class Pause extends Command
         $command = [
             'docker',
             'pause',
-            $containerName
+            $containerName,
         ];
 
         echo 'command | ';
         echo \Peanut\Console\Color::text(implode(' ', $command), 'white').PHP_EOL.PHP_EOL;
         echo $this->process($command, ['print' => false]);
-
     }
 }

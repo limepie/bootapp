@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
 
-declare (ticks = 1);
+declare(ticks=1);
 
 class Up extends Command
 {
@@ -26,7 +26,7 @@ class Up extends Command
     /**
      * @param \Peanut\Console\Application $app
      */
-    function configuration(\Peanut\Console\Application $app)
+    public function configuration(\Peanut\Console\Application $app)
     {
         $app->option('attach', ['require' => false, 'alias' => 'a', 'value' => false]);
         $app->option('pull', ['require' => false, 'alias' => 'p', 'value' => false]);
@@ -36,10 +36,10 @@ class Up extends Command
      * @param \Peanut\Console\Application $app
      * @param array                       $config
      */
-    function exec(\Peanut\Console\Application $app, array $config)
+    public function exec(\Peanut\Console\Application $app, array $config)
     {
         $this->process('sudo -v', ['print' => false]);
-        $mode = $app->getOption('attach') ? 'attach' : 'detach';
+        $mode   = $app->getOption('attach') ? 'attach' : 'detach';
         $ispull = $app->getOption('pull') ? true : false;
 
         if ('attach' == $mode) {
@@ -88,7 +88,7 @@ class Up extends Command
         }
     }
 
-    function run($mode, $ispull)
+    public function run($mode, $ispull)
     {
         $this->initMachine();
         $this->dockerComposeFileGenerate();

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controllers;
 
 class Env extends Command
@@ -27,7 +26,7 @@ class Env extends Command
         $command = [
             'docker-machine',
             'env',
-            $this->getMachineName()
+            $this->getMachineName(),
         ];
         echo $this->process($command, ['print' => false]);
     }

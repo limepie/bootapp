@@ -3,7 +3,7 @@
 
 $loaded = false;
 
-foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
+foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
         require $file;
         $loaded = true;
@@ -13,9 +13,9 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
 
 if (!$loaded) {
     die(
-        'You need to set up the project dependencies using the following commands:' . PHP_EOL .
-        'wget http://getcomposer.org/composer.phar' . PHP_EOL .
-        'php composer.phar install' . PHP_EOL
+        'You need to set up the project dependencies using the following commands:'.PHP_EOL.
+        'wget http://getcomposer.org/composer.phar'.PHP_EOL.
+        'php composer.phar install'.PHP_EOL
     );
 }
 
@@ -57,6 +57,6 @@ try {
     $app->command(new \App\Controllers\Unpause());
 
     $app->match();
-} catch(\Peanut\Console\Exception $e) {
+} catch (\Peanut\Console\Exception $e) {
     print_r($e->getMessage());
 }

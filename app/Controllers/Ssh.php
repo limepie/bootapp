@@ -48,7 +48,7 @@ class Ssh extends Command
             'exec',
             '-it',
             $containerName,
-            $cmd
+            $cmd,
         ];
 
         echo 'command | ';

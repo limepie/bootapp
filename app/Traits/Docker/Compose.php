@@ -12,14 +12,14 @@ trait Compose
         } else {
             $stages = [
                 'local' => [
-                    'services' => []
-                ]
+                    'services' => [],
+                ],
             ];
         }
 
         foreach ($stages as $stageName => $stage) {
             $compose = [
-                'version' => '2'
+                'version' => '2',
             ];
 
             if (true === isset($config['volumes']) || true === isset($stage['volumes'])) {
@@ -67,13 +67,13 @@ trait Compose
                     $services[$serviceName]['labels'] += [
                         'com.docker.bootapp.service' => $serviceName,
                         'com.docker.bootapp.name'    => $this->getContainerName($serviceName),
-                        'com.docker.bootapp.project' => $this->getProjectName()
+                        'com.docker.bootapp.project' => $this->getProjectName(),
                     ];
 
                     if (true === isset($services[$serviceName]['environment']['DOMAIN'])) {
                         $services[$serviceName]['labels']['com.docker.bootapp.domain'] = $services[$serviceName]['environment']['DOMAIN'];
 
-                        if(false === strpos($services[$serviceName]['environment']['DOMAIN'], ' ')) {
+                        if (false === strpos($services[$serviceName]['environment']['DOMAIN'], ' ')) {
                             $services[$serviceName]['labels']['com.docker.bootapp.domain'] = $services[$serviceName]['environment']['DOMAIN'];
                         } else {
                             throw new \Peanut\Console\Exception('domain name not valid');
@@ -126,9 +126,9 @@ trait Compose
                 foreach ($compose['services'] as $service_name => &$service) {
                     if (true === isset($service['environment']) && $service['environment']) {
                         foreach ($service['environment'] as $key => &$value) {
-                            if($key == 0 && is_null($value)) {
+                            if ($key == 0 && is_null($value)) {
                                 unset($service['environment'][$key]);
-                            } elseif(true === is_array($value)) {
+                            } elseif (true === is_array($value)) {
                                 $value = "'".json_encode($value, JSON_UNESCAPED_SLASHES)."'";
                             }
                         }

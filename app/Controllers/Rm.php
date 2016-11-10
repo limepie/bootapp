@@ -42,7 +42,7 @@ class Rm extends Command
 
         $command = [
             'docker',
-            'rm'
+            'rm',
         ];
 
         if ($force) {

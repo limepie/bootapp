@@ -8,7 +8,7 @@ trait Ls
      */
     public function dockerLs($isAll = false)
     {
-//--filter "label=com.docker.bootapp.project="
+        //--filter "label=com.docker.bootapp.project="
         $stageName   = $this->getStageName();
 
         $command = [
@@ -16,7 +16,7 @@ trait Ls
             'ps',
             '--no-trunc',
             '--format=\'id={{.ID}}&service={{.Label "com.docker.compose.service"}}&image={{.Image}}&command={{.Command}}&created={{.CreatedAt}}&running={{.RunningFor}}&ports={{.Ports}}&status={{.Status}}&size={{.Size}}&names={{.Names}}\'',
-            '2>&1'
+            '2>&1',
         ];
         $psList = $this->process($command, ['print' => false])->toArray();
 
@@ -26,7 +26,7 @@ trait Ls
                 'inspect',
                 '--format="name={{.Name}}&ip={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}&service={{index .Config.Labels \"com.docker.bootapp.service\"}}&id={{.Id}}&env={{json .Config.Env}}"',
                 '$(docker ps -q)',
-                '2>&1'
+                '2>&1',
             ];
             $inspectList = $this->process($command, ['print' => false])->toArray();
 
@@ -79,7 +79,7 @@ trait Ls
                 foreach ($tmp as $k1 => $v1) {
                     $docker[] = [
                         'key'   => $k1,
-                        'value' => $v1
+                        'value' => $v1,
                     ];
                 }
 
@@ -106,7 +106,7 @@ trait Ls
                     'status'  => $tmp['status'],
                     'ip'      => $tmp['ip'],
                     'domain'  => $tmp['domain'],
-                    'ports'   => $tmp['ports']
+                    'ports'   => $tmp['ports'],
                 ];
             }
 

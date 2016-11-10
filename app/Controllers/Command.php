@@ -215,7 +215,7 @@ class Command extends \Peanut\Console\Command
      */
     public function getMachineName()
     {
-// todo: 서로 다른 machine의 bridge network가 같은 대역 subnet일 경우 /etc/hosts/에 간섭이 일어나므로 수정할것
+        // todo: 서로 다른 machine의 bridge network가 같은 대역 subnet일 경우 /etc/hosts/에 간섭이 일어나므로 수정할것
 
 //return 'bootapp-docker-machine';
 
@@ -300,7 +300,7 @@ class Command extends \Peanut\Console\Command
         return $this->process([
             'docker-machine',
             'ip',
-            $this->getMachineName()
+            $this->getMachineName(),
         ], ['print' => false]); //parse_url(getenv('DOCKER_HOST'), PHP_URL_HOST);
     }
 }

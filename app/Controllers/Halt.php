@@ -9,10 +9,14 @@ class Halt extends Command
      * @var string
      */
     public $command = 'halt';
+
     /**
      * @param \Peanut\Console\Application $app
      */
-    public function configuration(\Peanut\Console\Application $app) {}
+    public function configuration(\Peanut\Console\Application $app)
+    {
+    }
+
     /**
      * @param \Peanut\Console\Application $app
      * @param array                       $config

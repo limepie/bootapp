@@ -4,6 +4,7 @@ namespace App\Controllers;
 class Fix extends Command
 {
     use \App\Traits\Machine;
+
     /**
      * @var string
      */
@@ -24,6 +25,5 @@ class Fix extends Command
     public function exec(\Peanut\Console\Application $app, array $config)
     {
         $this->initMachine();
-
     }
 }

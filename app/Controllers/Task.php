@@ -49,7 +49,7 @@ class Task extends Command
 
         $command = [
             'docker',
-            'exec'
+            'exec',
         ];
 
         if (true === isset($task['user'])) {

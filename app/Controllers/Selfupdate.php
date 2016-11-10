@@ -14,7 +14,9 @@ class Selfupdate extends Command
     /**
      * @param \Peanut\Console\Application $app
      */
-    public function configuration(\Peanut\Console\Application $app) {}
+    public function configuration(\Peanut\Console\Application $app)
+    {
+    }
     /**
      * @param \Peanut\Console\Application $app
      */

@@ -19,7 +19,7 @@ trait Run
             'inspect',
             '--format="name={{.Name}}&subnet={{range .IPAM.Config}}{{.Subnet}}{{end}}"',
             '$(docker network ls -q)',
-            '2>&1'
+            '2>&1',
         ];
 
         $raw = $this->process($command, ['print' => false])->toArray();
@@ -47,10 +47,10 @@ trait Run
 
         $real = preg_replace([
             '#^.(/|:)#',
-            '#(\s)#'
+            '#(\s)#',
         ], [
             $cwd.'$1',
-            '\\ '
+            '\\ ',
         ], $path);
 
         if (0 === preg_match('#:r(o|w)$#', $path, $match)) {
@@ -78,7 +78,7 @@ trait Run
                     'docker',
                     'ps',
                     '-aq',
-                    '--filter="label=com.docker.bootapp.project='.$inputProjectName.'"'
+                    '--filter="label=com.docker.bootapp.project='.$inputProjectName.'"',
                 ];
                 $existsCount = count($this->process($command, ['print' => false])->toArray());
 
@@ -137,7 +137,7 @@ trait Run
                         $command = [
                             'docker',
                             'pull',
-                            $service['image']
+                            $service['image'],
                         ];
                         //$this->message('build '.$service['name']);
                         echo $service['org_name'].' ';
@@ -199,7 +199,7 @@ trait Run
                     'rm',
                     '-f',
                     $service['name'],
-                    '2>&1'
+                    '2>&1',
                 ];
                 $this->process($rmCommand, ['print' => false]);
             }
@@ -216,10 +216,10 @@ trait Run
                     'default' => [
                         'ipam' => [
                             'config' => [
-                                ['subnet']
-                            ]
-                        ]
-                    ]
+                                ['subnet'],
+                            ],
+                        ],
+                    ],
                 ];
             }
 
@@ -242,7 +242,7 @@ trait Run
                             'network',
                             'rm',
                             $networkName,
-                            '2>&1'
+                            '2>&1',
                         ];
                         $this->process($networkRmcommand, ['print' => false]);
                         unset($dockerNetworks[$networkName]);
@@ -264,7 +264,7 @@ trait Run
                                         'docker',
                                         'network',
                                         'rm',
-                                        $dockerNetworkName
+                                        $dockerNetworkName,
                                     ];
                                     $this->process($networkRmCommand, ['print' => false]);
                                 }
@@ -284,13 +284,12 @@ trait Run
                         'docker',
                         'network',
                         'create',
-                        '--driver=bridge'
+                        '--driver=bridge',
                     ];
 
                     if ($subnet) {
                         $networkCreateCommand[] = '--subnet='.implode(' --subnet=', $subnet);
                     } else {
-
                         $subnetFile = $this->process('echo $HOME', ['print' => false])->toString().'/.docker/docker-machine-subnet.yaml';
 
                         if (false === is_file($subnetFile)) {
@@ -309,9 +308,9 @@ trait Run
                             $bridge = $this->process("docker network inspect --format='{{range .IPAM.Config}}{{.Subnet}}{{end}}' bridge", ['print' => false])->toString();
 
                             $subnetIps = [];
-                            foreach($subnets as $machines) {
-                                if(true === is_array($machines)) {
-                                    foreach($machines as $projectIp) {
+                            foreach ($subnets as $machines) {
+                                if (true === is_array($machines)) {
+                                    foreach ($machines as $projectIp) {
                                         $subnetIps[] = $projectIp;
                                     }
                                 }
@@ -332,7 +331,6 @@ trait Run
                             \App\Helpers\Yaml::dumpFile($subnetFile, $subnets);
                         }
                         $networkCreateCommand[] = '--subnet='.$subnet;
-
                     }
 
                     $networkCreateCommand[] = $networkName;
@@ -345,7 +343,7 @@ trait Run
                         'inspect',
                         '--format="{{range .IPAM.Config}}{{.Subnet}}{{end}}"',
                         $networkName,
-                        '2>&1'
+                        '2>&1',
                     ];
                     $subnet = $this->process($networkInspectCommand, ['print' => false])->toArray();
 
@@ -425,7 +423,7 @@ trait Run
 
                 if (true === isset($service['environment'])) {
                     foreach ($service['environment'] as $key => $value) {
-                        if(true === is_array($value)) {
+                        if (true === is_array($value)) {
                             $value = "'".json_encode($value, JSON_UNESCAPED_SLASHES)."'";
                         }
                         $command[] = '-e '.$key.'='.escapeshellarg($value);
@@ -455,7 +453,7 @@ trait Run
                                 'docker',
                                 'inspect',
                                 '--format="service={{index .Config.Labels \"com.docker.bootapp.service\"}}&&ip={{with index .NetworkSettings.Networks \"'.$networkName.'\"}}{{.IPAddress}}{{end}}"',
-                                $this->getContainerName($value)
+                                $this->getContainerName($value),
                             ];
 
                             $str = $this->process($inspectCommand, ['print' => false])->toString();
@@ -521,7 +519,7 @@ trait Run
                 }
 
                 if (true === isset($service['environment']['DOMAIN'])) {
-                    if(false === strpos($service['environment']['DOMAIN'], ' ')) {
+                    if (false === strpos($service['environment']['DOMAIN'], ' ')) {
                         $command[] = '--label com.docker.bootapp.domain="'.$service['environment']['DOMAIN'].'"';
                     } else {
                         throw new \Peanut\Console\Exception('domain name not valid');
@@ -560,7 +558,7 @@ trait Run
                     $command = [
                         'docker',
                         'start',
-                        $service['name']
+                        $service['name'],
                     ];
                     $this->process($command, ['print' => false]);
                 }
@@ -579,7 +577,7 @@ trait Run
                         'docker',
                         'attach',
                         '--sig-proxy=true',
-                        $service['name']
+                        $service['name'],
                     ];
                     $this->childProcess($service['name'], implode(' ', $command));
                 }
@@ -590,4 +588,3 @@ trait Run
         }
     }
 }
-

@@ -21,7 +21,7 @@ if ($count >= 0 && true === isset($manifestArray[$count])) {
 
 if (array_key_exists('v', $opt)) {
     $vtype = 'patch';
-    if(true === in_array($opt['v'], ['major', 'minor', 'patch'])) {
+    if (true === in_array($opt['v'], ['major', 'minor', 'patch'])) {
         $vtype = $opt['v'];
     }
     $version = versionup($version, $vtype);
@@ -89,8 +89,8 @@ if (array_key_exists('v', $opt)) {
             'name'    => $pharName,
             'sha1'    => sha1_file($pharFile),
             'url'     => 'https://github.com/yejune/bootapp/blob/'.$version.'/bootapp.phar?raw=true',
-            'version' => $version
-        ]
+            'version' => $version,
+        ],
     ]), JSON_PRETTY_PRINT));
     shell_exec('git add .');
     shell_exec('git commit -m "build '.$version.'"');

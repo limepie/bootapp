@@ -30,7 +30,7 @@ trait Machine
             'docker-machine',
             'stop',
             $machineName,
-            '2>&1'
+            '2>&1',
         ];
         $this->process($command, ['print' => true]);
         $this->removeNetwork();
@@ -45,7 +45,7 @@ trait Machine
             'showvminfo',
             $machineName,
             '--details',
-            '--machinereadable'
+            '--machinereadable',
         ];
         $raw              = $this->process($command, ['print' => false])->toArray();
         $uuid             = '';
@@ -110,7 +110,7 @@ trait Machine
                     'docker-machine',
                     'env',
                     $machineName,
-                    '2>&1'
+                    '2>&1',
                 ];
                 $env = $this->process($command, ['print' => false]);
 
@@ -151,7 +151,7 @@ trait Machine
                 '|',
                 'grep',
                 $name,
-                '2>&1'
+                '2>&1',
             ];
             $chk = $this->process($command, ['print' => false])->toString();
 
@@ -160,7 +160,7 @@ trait Machine
                     'VBoxManage',
                     'hostonlyif',
                     'remove',
-                    $name
+                    $name,
                 ];
                 $this->process($command, ['print' => false]);
             }
@@ -177,7 +177,7 @@ trait Machine
                 '|',
                 'grep',
                 $name,
-                '2>&1'
+                '2>&1',
             ];
             $chk = $this->process($command, ['print' => false])->toString();
 
@@ -191,7 +191,7 @@ trait Machine
                     'sudo',
                     'ifconfig',
                     $name,
-                    '2>&1'
+                    '2>&1',
                 ];
                 $this->process($command, ['print' => false]);
             }
@@ -208,7 +208,7 @@ trait Machine
             'docker-machine',
             'status',
             $machineName,
-            '2>&1'
+            '2>&1',
         ];
 
         return strtolower($this->process($command, ['print' => false])->toString());
@@ -227,7 +227,7 @@ trait Machine
         } elseif ('stopped' === $machineStatus) {
             $this->removeNetwork();
             $this->startDockerMachine();
-        } else if('paused' === $machineStatus) {
+        } elseif ('paused' === $machineStatus) {
             $this->resumeDockerMachine();
         } elseif ('saved' === $machineStatus) {
             $this->discardDockerMachine();
@@ -277,7 +277,7 @@ trait Machine
         $command = [
             'vboxmanage',
             'discardstate',
-            $machineName
+            $machineName,
         ];
         $this->process($command, ['print' => true]);
     }
@@ -295,7 +295,7 @@ trait Machine
             'docker-machine',
             'rm',
             '-f',
-            $machineName
+            $machineName,
         ];
         $this->process($command, ['print' => true]);
     }
@@ -308,7 +308,7 @@ trait Machine
         $command = [
             'docker-machine',
             'start',
-            $machineName
+            $machineName,
         ];
         $this->process($command, ['print' => true]);
     }
@@ -320,7 +320,7 @@ trait Machine
             'docker-machine',
             'regenerate-certs',
             '-f',
-            $machineName
+            $machineName,
         ];
         $this->process($command, ['print' => true]);
     }
@@ -336,7 +336,7 @@ trait Machine
             '--virtualbox-memory=2048',
             '--virtualbox-disk-size=200000',
             '--virtualbox-cpu-count=2',
-            $machineName
+            $machineName,
         ];
         $this->process($command, ['print' => true]);
     }
@@ -372,7 +372,7 @@ trait Machine
             $command = [
                 'docker',
                 'info',
-                '2>&1'
+                '2>&1',
             ];
 
             $tmp = $this->process($command, ['print' => false])->toString();
@@ -403,7 +403,7 @@ trait Machine
                     'VBoxManage',
                     'controlvm',
                     $machineName,
-                    'acpipowerbutton'
+                    'acpipowerbutton',
                 ];
                 $this->process($command, ['print' => false]);
                 echo 'stop vm ';
@@ -417,7 +417,7 @@ trait Machine
                         '|',
                         'grep',
                         'VMState=',
-                        '2>&1'
+                        '2>&1',
                     ];
                     $tmp = $this->process($command, ['print' => false])->toString();
                     echo '.';
@@ -443,7 +443,7 @@ trait Machine
                 $name,
                 '--hostpath',
                 $path,
-                '--automount'
+                '--automount',
             ];
             $this->process($command, ['print' => false]);
         }
@@ -505,7 +505,7 @@ trait Machine
             'sudo',
             'tee',
             '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
-            "'"
+            "'",
         ];
 
         $this->process($command, ['print' => false]);
@@ -526,7 +526,7 @@ trait Machine
             'tee',
             '-a',
             '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
-            "'"
+            "'",
         ];
         $this->process($command, ['print' => false]);
         $command = [
@@ -551,7 +551,7 @@ trait Machine
             'tee',
             '-a',
             '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
-            "'"
+            "'",
         ];
         $this->process($command, ['print' => false]);
 
@@ -563,7 +563,7 @@ trait Machine
             'sudo',
             'sh',
             '/mnt/sda1/var/lib/boot2docker/bootlocal.sh',
-            "'"
+            "'",
         ];
 
         $this->process($command, ['print' => false]);
@@ -588,7 +588,7 @@ trait Machine
                 'docker',
                 'network',
                 'inspect',
-                $networkName
+                $networkName,
             ];
             $networks        = $this->process($command, ['print' => false])->jsonToArray();
             $containerSubnet = '';
@@ -628,7 +628,7 @@ trait Machine
                 '-n',
                 'delete',
                 $containerSubnet,
-                $dockerMachineIp
+                $dockerMachineIp,
             ];
             $message = $this->process($command, ['print' => false]);
 
@@ -638,7 +638,7 @@ trait Machine
                 '-n',
                 'add',
                 $containerSubnet,
-                $dockerMachineIp
+                $dockerMachineIp,
             ];
             $message = $this->process($command, ['print' => false]);
         }
@@ -663,7 +663,7 @@ trait Machine
             'docker',
             'inspect',
             '--format="name={{.Name}}&ip={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}&service={{index .Config.Labels \"com.docker.bootapp.service\"}}&id={{.Id}}&env={{json .Config.Env}}"',
-            '$(docker ps -q)'
+            '$(docker ps -q)',
         ];
 
         $inspectList = $this->process($command, ['print' => false])->toArray();
@@ -671,14 +671,14 @@ trait Machine
         $machineName = $this->getMachineName();
         $projectName = $this->getProjectName();
 
-        $id = $machineName.'_'.$projectName;
+        $id      = $machineName.'_'.$projectName;
         $command = [
             'sudo',
             'sed',
             '-i',
             '-e',
             '"/## '.$id.'/d"',
-            '/etc/hosts'
+            '/etc/hosts',
         ];
 
 //echo PHP_EOL.implode(' ', $command).PHP_EOL.PHP_EOL.PHP_EOL;
@@ -712,7 +712,7 @@ trait Machine
                 '-e',
                 '"/^'.$ip.' /d"',
                 '/etc/hosts',
-                '2>&1'
+                '2>&1',
             ];
             //echo PHP_EOL.implode(' ', $command).PHP_EOL;
 
@@ -727,7 +727,7 @@ trait Machine
                 '-e',
                 '"/ '.$domain.' /d"',
                 '/etc/hosts',
-                '2>&1'
+                '2>&1',
             ];
             //echo PHP_EOL.implode(' ', $command).PHP_EOL;
 
@@ -746,14 +746,13 @@ trait Machine
                 'sh',
                 '-c',
                 '-e',
-                '"echo \''.$str.'          ## '.$id.'\' >> /etc/hosts";'
+                '"echo \''.$str.'          ## '.$id.'\' >> /etc/hosts";',
             ];
             //echo PHP_EOL.implode(' ', $command).PHP_EOL;
 
             $this->process($command, ['print' => false]);
         }
     }
-
 
     /**
      * @param $config
@@ -774,7 +773,7 @@ trait Machine
             'docker',
             'inspect',
             '--format="name={{.Name}}&ip={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}&service={{index .Config.Labels \"com.docker.bootapp.service\"}}&id={{.Id}}&env={{json .Config.Env}}"',
-            '$(docker ps -q)'
+            '$(docker ps -q)',
         ];
 
         $inspectList = $this->process($command, ['print' => false])->toArray();
@@ -783,7 +782,6 @@ trait Machine
         $projectName = $this->getProjectName();
 
         $id = $machineName.'_'.$projectName;
-
 
         $domainList = [];
 
@@ -798,7 +796,7 @@ trait Machine
             if (true === in_array($name, $serviceList)) {
                 foreach ($envs as $envstring) {
                     list($key, $value) = explode('=', $envstring, 2);
-                    $env[$key] = $value;
+                    $env[$key]         = $value;
                 }
 
                 if (isset($env['DOMAIN']) && isset($env['USE_SSL'])) {
@@ -807,17 +805,17 @@ trait Machine
             }
         }
 
-        if($domainList) {
-            $SSL_DIR=getcwd()."/var/certs";
-            if(false === is_dir(getcwd().'/var')) {
+        if ($domainList) {
+            $SSL_DIR = getcwd().'/var/certs';
+            if (false === is_dir(getcwd().'/var')) {
                 mkdir(getcwd().'/var');
             }
-            if(false === is_dir(getcwd().'/var/certs')) {
+            if (false === is_dir(getcwd().'/var/certs')) {
                 mkdir(getcwd().'/var/certs');
             }
 
             shell_exec('mkdir -p '.$SSL_DIR);
-            $certs = [];
+            $certs    = [];
             $certsAll = [];
             foreach ($domainList as $ip => $domain) {
                 $sslname = $SSL_DIR.'/'.$domain;
@@ -826,7 +824,7 @@ trait Machine
                 $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert   ./var/certs/'.$domain.'.cert');
                 $this->message(\Peanut\Console\Color::text('        | ', 'white').'key    ./var/certs/'.$domain.'.key');
 
-                if(false === file_exists($sslname.'.key')) {
+                if (false === file_exists($sslname.'.key')) {
                     $certs[] = './var/certs/'.$domain.'.cert';
 
                     $command = [
@@ -834,7 +832,7 @@ trait Machine
                         'genrsa',
                         '-out',
                         $sslname.'.key',
-                        '2048'
+                        '2048',
                     ];
                     $this->process($command, ['print' => false]);
 
@@ -850,15 +848,16 @@ trait Machine
                         '-days',
                         '3650',
                         '-subj',
-                        '/CN='.$domain
+                        '/CN='.$domain,
                     ];
                     $this->process($command, ['print' => false]);
-                } else {}
+                } else {
+                }
 
                 $certsAll[] = './var/certs/'.$domain.'.cert';
             }
 
-            if(count($certs)) {
+            if (count($certs)) {
                 $this->process('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certs), ['print' => false, 'tty' => true]);
                 $this->process('open /Applications/Utilities/Keychain\ Access.app', ['print' => false, 'tty' => true]);
             } else {
@@ -866,8 +865,6 @@ trait Machine
                 $this->message('# Run this command to configure your ssl certificate:');
                 $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certsAll).'', 'white'));
             }
-
         }
     }
-
 }

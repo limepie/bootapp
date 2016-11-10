@@ -39,7 +39,7 @@ class Log extends Command
 
         $command = [
             'docker',
-            'logs'
+            'logs',
         ];
 
         if ($isFollow) {
