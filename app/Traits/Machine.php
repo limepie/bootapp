@@ -858,12 +858,12 @@ trait Machine
             }
 
             if (count($certs)) {
-                $this->process('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certs), ['print' => false, 'tty' => true]);
-                $this->process('open /Applications/Utilities/Keychain\ Access.app', ['print' => false, 'tty' => true]);
+                $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.implode(' ', $certs), ['print' => false, 'tty' => true]);
+                $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain', ['print' => false, 'tty' => true]);
             } else {
                 $this->message();
                 $this->message('# Run this command to configure your ssl certificate:');
-                $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app '.implode(' ', $certsAll).'', 'white'));
+                $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app', 'white'));
             }
         }
     }
