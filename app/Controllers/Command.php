@@ -18,6 +18,7 @@ class Command extends \Peanut\Console\Command
     /**
      * @var mixed
      */
+
     public $verbose = false;
     /**
      * @param $command
@@ -215,7 +216,7 @@ class Command extends \Peanut\Console\Command
      */
     public function getMachineName()
     {
-        // todo: 서로 다른 machine의 bridge network가 같은 대역 subnet일 경우 /etc/hosts/에 간섭이 일어나므로 수정할것
+        // TODO : 서로 다른 machine의 bridge network가 같은 대역 subnet일 경우 /etc/hosts/에 간섭이 일어나므로 수정할것
 
         //return 'bootapp-docker-machine';
 

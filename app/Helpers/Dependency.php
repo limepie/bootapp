@@ -7,10 +7,12 @@ class Dependency
      * @var array
      */
     protected $elements = [];
+
     /**
      * @var mixed
      */
     protected $sorted;
+
     /**
      * @var int
      */
@@ -36,6 +38,7 @@ class Dependency
     public function __construct($array)
     {
     }
+
     /**
      * @param array $elements
      */

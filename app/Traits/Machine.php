@@ -114,7 +114,7 @@ trait Machine
                 ];
                 $env = $this->process($command, ['print' => false]);
 
-//Error checking and/or regenerating the certs
+                //Error checking and/or regenerating the certs
                 if (false !== strpos($env->toString(), 'regenerate-certs')
                     || false !== strpos($env->toString(), 'Could not read CA certificate')) {
                     $this->certsDockerMachine();
@@ -242,14 +242,14 @@ trait Machine
             $this->startDockerMachine();
         }
 
-/*
+        /*
         //$this->reloadNetwork($machineName);
         $msg = $this->process('docker-machine env '.$machineName, ['print' => true]);
 
         if ('Error checking TLS connection: Host is not running' === $msg) {
             throw new \Exception('Error checking TLS connection: Host is not running');
         }
-*/
+        */
     }
 
     private function resumeDockerMachine()
@@ -455,7 +455,7 @@ trait Machine
         list($first, $name, $third) = explode(DIRECTORY_SEPARATOR, getcwd(), 3);
         $path                       = implode(DIRECTORY_SEPARATOR, [$first, $name]);
 
-/*
+        /*
         $command = [
             'docker-machine',
             'ssh',
@@ -486,7 +486,7 @@ trait Machine
             '"'
         ];
         $this->process($command, ['print' => false]);
-*/
+        */
         $command = [
             'docker-machine',
             'ssh',
@@ -540,9 +540,9 @@ trait Machine
             '-t',
             'vboxsf',
             '-o',
-//            'umask=0022,gid=50,uid=1000',
+            // 'umask=0022,gid=50,uid=1000',
             'uid=1000,gid=50,dmode=0777,fmode=0777',
-            //            'uid=`id -u docker`,gid=`id -g docker`,dmode=0777,fmode=0777',
+            // 'uid=`id -u docker`,gid=`id -g docker`,dmode=0777,fmode=0777',
             $name,
             $path,
             '"',
@@ -573,15 +573,15 @@ trait Machine
     {
         $machineName = $this->getMachineName();
 
-/*
-    $docker0 = $this->process('docker-machine ssh '.$machineName.' ifconfig docker0 2>&1', ['print' => false]);
+        /*
+        $docker0 = $this->process('docker-machine ssh '.$machineName.' ifconfig docker0 2>&1', ['print' => false]);
 
-    if (1 === preg_match('#inet addr:(.*)\sBcast#', $docker0, $match)) {
-        $containerSubnet = trim($match[1]).'/16';
-    } else {
-        throw new \Peanut\Console\Exception('guest subnet ip not found');
-    }
-    */
+        if (1 === preg_match('#inet addr:(.*)\sBcast#', $docker0, $match)) {
+            $containerSubnet = trim($match[1]).'/16';
+        } else {
+            throw new \Peanut\Console\Exception('guest subnet ip not found');
+        }
+        */
 
         foreach ($this->networkName as $networkName) {
             $command = [
@@ -606,14 +606,14 @@ trait Machine
             }
 
             /*
-    $eth1 = $this->process('docker-machine ssh '.$machineName.' ifconfig eth1 2>&1', ['print' => false]);
+            $eth1 = $this->process('docker-machine ssh '.$machineName.' ifconfig eth1 2>&1', ['print' => false]);
 
-    if (1 === preg_match('#inet addr:(.*)\sBcast#', $eth1, $match)) {
-        $dockerMachineIp = trim($match[1]);
-    } else {
-        throw new \Peanut\Console\Exception('guest ip not found');
-    }
-    */
+            if (1 === preg_match('#inet addr:(.*)\sBcast#', $eth1, $match)) {
+                $dockerMachineIp = trim($match[1]);
+            } else {
+                throw new \Peanut\Console\Exception('guest ip not found');
+            }
+            */
             $dockerMachineIp = $this->getMachineIp();
 
             if (!$dockerMachineIp) {
@@ -681,7 +681,7 @@ trait Machine
             '/etc/hosts',
         ];
 
-//echo PHP_EOL.implode(' ', $command).PHP_EOL.PHP_EOL.PHP_EOL;
+        //echo PHP_EOL.implode(' ', $command).PHP_EOL.PHP_EOL.PHP_EOL;
         $this->process($command, ['print' => false]);
 
         $domainList = [];
