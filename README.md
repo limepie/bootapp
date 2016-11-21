@@ -1,28 +1,31 @@
 # bootapp
 
-Bootapp [-v|vv|vvv, --verbose] self-update
+macOS에서 docker 기반 개발에 도움을 줌.
 
-Bootapp [-v|vv|vvv, --verbose] up [-a, --attach|-p, --pull]
 
-Bootapp [-v|vv|vvv, --verbose] halt
+-   self-update
 
-Bootapp [-v|vv|vvv, --verbose] ls [-a, --all]
+-   up [-a, --attach|-p, --pull]
 
-Bootapp [-v|vv|vvv, --verbose] rm [CONTAINER NAME] [-f, --force]
+-   halt
 
-Bootapp [-v|vv|vvv, --verbose] fix [TARGET]
+-   ls [-a, --all]
 
-Bootapp [-v|vv|vvv, --verbose] log [-f, --follow] [CONTAINER NAME]
+-   rm [CONTAINER NAME] [-f, --force]
 
-Bootapp [-v|vv|vvv, --verbose] inspect [CONTAINER NAME]
+-   fix [TARGET]
 
-Bootapp [-v|vv|vvv, --verbose] ssh [CONTAINER NAME] *
+-   log [-f, --follow] [CONTAINER NAME]
 
-Bootapp [-v|vv|vvv, --verbose] task [TASK NAME] *
+-   inspect [CONTAINER NAME]
 
-Bootapp [-v|vv|vvv, --verbose] env
+-   ssh [CONTAINER NAME] *
 
-Bootapp [-v|vv|vvv, --verbose] pause [CONTAINER NAME]
+-   task [TASK NAME] *
 
-Bootapp [-v|vv|vvv, --verbose] unpause [CONTAINER NAME]
+-   env
+
+-   pause [CONTAINER NAME]
+
+-   unpause [CONTAINER NAME]
 
