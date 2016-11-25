@@ -815,18 +815,22 @@ trait Machine
             }
 
             shell_exec('mkdir -p '.$SSL_DIR);
-            $certs    = [];
-            $certsAll = [];
+
+            $dump = $this->process('sudo security dump-trust-settings -d', ['print' => false]);
+
+            $certList = [];
+            if (preg_match_all('#Cert (?P<key>[0-9]+): (?P<domain>[^\n]+)#', $dump, $matches)) {
+                $certList = $matches['domain'];
+            } else {
+            }
             foreach ($domainList as $ip => $domain) {
                 $sslname = $SSL_DIR.'/'.$domain;
 
                 $this->message(\Peanut\Console\Color::text('cert    | ', 'white').'domain '.$domain);
-                $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert   ./var/certs/'.$domain.'.cert');
-                $this->message(\Peanut\Console\Color::text('        | ', 'white').'key    ./var/certs/'.$domain.'.key');
+                //$this->message(\Peanut\Console\Color::text('        | ', 'white').'key     ./var/certs/'.$domain.'.key');
 
-                if (false === file_exists($sslname.'.key')) {
-                    $certs[] = './var/certs/'.$domain.'.cert';
-
+                $certfile = './var/certs/'.$domain.'.cert';
+                if (false === file_exists($certfile)) {
                     $command = [
                         'openssl',
                         'genrsa',
@@ -853,18 +857,18 @@ trait Machine
                     $this->process($command, ['print' => false]);
                 } else {
                 }
+                if (true === file_exists($certfile) && false === in_array($domain, $certList)) {
+                    $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.$certfile, ['print' => false]);
 
-                $certsAll[] = './var/certs/'.$domain.'.cert';
+                    $this->message(\Peanut\Console\Color::text('        | ', 'white').'trusted ./var/certs/'.$domain.'.cert');
+                } else {
+                    $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert    ./var/certs/'.$domain.'.cert');
+                }
             }
 
-            if (count($certs)) {
-                $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.implode(' ', $certs), ['print' => false, 'tty' => true]);
-                $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain', ['print' => false, 'tty' => true]);
-            } else {
-                $this->message();
-                $this->message('# Run this command to configure your ssl certificate:');
-                $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app', 'white'));
-            }
+            #$this->message();
+            #$this->message('# Run this command to configure your ssl certificate:');
+            #$this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app', 'white'));
         }
     }
 }
