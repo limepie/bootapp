@@ -756,6 +756,7 @@ trait Machine
 
     /**
      * @param $config
+     * TODO : Run before container creation
      */
     public function setCert()
     {
@@ -866,9 +867,9 @@ trait Machine
                 }
             }
 
-            #$this->message();
-            #$this->message('# Run this command to configure your ssl certificate:');
-            #$this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app', 'white'));
+            $this->message();
+            $this->message('# Run this command to configure your ssl certificate:');
+            $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app', 'white'));
         }
     }
 }
