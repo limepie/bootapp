@@ -92,9 +92,9 @@ class Up extends Command
     {
         $this->initMachine();
         $this->dockerComposeFileGenerate();
+        $this->setCert();
         $this->dockerRunContainers($mode, $ispull);
         $this->setRoute();
         $this->setHost();
-        $this->setCert();
     }
 }

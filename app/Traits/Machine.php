@@ -866,10 +866,6 @@ trait Machine
                     $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert    ./var/certs/'.$domain.'.cert');
                 }
             }
-
-            $this->message();
-            $this->message('# Run this command to configure your ssl certificate:');
-            $this->message(\Peanut\Console\Color::text('open /Applications/Utilities/Keychain\ Access.app', 'white'));
         }
     }
 }
