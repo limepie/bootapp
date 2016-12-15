@@ -761,47 +761,17 @@ trait Machine
     public function setCert()
     {
         $stageName   = $this->getStageName();
-
-        $serviceList = [];
-
-        $stageService = isset($this->config['stages'][$stageName]['services']) ? $this->config['stages'][$stageName]['services'] : [];
-
-        foreach ($this->config['services'] + $stageService as $key => $value) {
-            $serviceList[] = $this->getContainerName($key);
-        }
-
-        $command = [
-            'docker',
-            'inspect',
-            '--format="name={{.Name}}&ip={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}&service={{index .Config.Labels \"com.docker.bootapp.service\"}}&id={{.Id}}&env={{json .Config.Env}}"',
-            '$(docker ps -q)',
-        ];
-
-        $inspectList = $this->process($command, ['print' => false])->toArray();
-
         $machineName = $this->getMachineName();
         $projectName = $this->getProjectName();
 
-        $id = $machineName.'_'.$projectName;
-
+        $compose = \App\Helpers\Yaml::parseFile(getcwd().'/docker-compose.'.$stageName.'.yml');
         $domainList = [];
-
-        foreach ($inspectList as $str) {
-            parse_str($str, $b);
-
-            $envs = json_decode($b['env'], true);
-
-            $name = ltrim($b['name'], '/');
-
-            $env = [];
-            if (true === in_array($name, $serviceList)) {
-                foreach ($envs as $envstring) {
-                    list($key, $value) = explode('=', $envstring, 2);
-                    $env[$key]         = $value;
-                }
+        if(true === isset($compose['services'])) {
+            foreach($compose['services'] as $name => $service) {
+                $env = isset($service['environment']) ? $service['environment'] : [];
 
                 if (isset($env['DOMAIN']) && isset($env['USE_SSL'])) {
-                    $domainList[$b['ip']] = $env['DOMAIN'];
+                    $domainList[] = $env['DOMAIN'];
                 }
             }
         }
