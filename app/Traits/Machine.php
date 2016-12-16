@@ -766,8 +766,8 @@ trait Machine
 
         $compose = \App\Helpers\Yaml::parseFile(getcwd().'/docker-compose.'.$stageName.'.yml');
         $domainList = [];
-        if(true === isset($compose['services'])) {
-            foreach($compose['services'] as $name => $service) {
+        if (true === isset($compose['services'])) {
+            foreach ($compose['services'] as $name => $service) {
                 $env = isset($service['environment']) ? $service['environment'] : [];
 
                 if (isset($env['DOMAIN']) && isset($env['USE_SSL'])) {
@@ -828,12 +828,16 @@ trait Machine
                     $this->process($command, ['print' => false]);
                 } else {
                 }
-                if (true === file_exists($certfile) && false === in_array($domain, $certList)) {
+                if (true === file_exists($certfile)) {
+                    if (true === in_array($domain, $certList)) {
+                        $this->process('sudo security delete-certificate -c '.$domain.' /Library/Keychains/System.keychain', ['print' => false]);
+                    }
+
                     $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.$certfile, ['print' => false]);
 
                     $this->message(\Peanut\Console\Color::text('        | ', 'white').'trusted ./var/certs/'.$domain.'.cert');
                 } else {
-                    $this->message(\Peanut\Console\Color::text('        | ', 'white').'cert    ./var/certs/'.$domain.'.cert');
+                    //error
                 }
             }
         }
