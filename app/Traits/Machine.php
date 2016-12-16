@@ -754,10 +754,6 @@ trait Machine
         }
     }
 
-    /**
-     * @param $config
-     * TODO : Run before container creation
-     */
     public function setCert()
     {
         $stageName   = $this->getStageName();
