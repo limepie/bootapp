@@ -57,7 +57,7 @@ class Command extends \Peanut\Console\Command
         $process = new Process($command);
         $process->setTty($tty);
         $process->setTimeout($timeout);
-        $process->run(function ($type, $buf) use ($print) {
+        $process->run(function ($type, $buf) use ($print, $command) {
             if (true == $print) {
                 $buffers = explode(PHP_EOL, trim($buf, PHP_EOL));
 
@@ -66,7 +66,7 @@ class Command extends \Peanut\Console\Command
                         echo 'ERR > '.$buffer.PHP_EOL;
                     } else {
                         if ('reach it successfully.' == $buffer) {
-                            print_r($command);
+                            print_r('Check your docker-machine.');
                         }
 
                         echo \Peanut\Console\Color::text('OUT > ', 'black').$buffer.PHP_EOL;

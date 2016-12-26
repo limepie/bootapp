@@ -79,7 +79,7 @@ class Dependency
                     $this->visit($this->elements[$dependency], $newParents);
                 } else {
                     //print_r([$element->id, $dependency]);
-                    throw new \Console\Exception($element->id.' dependencies '.$dependency.' not found');
+                    throw new \Peanut\Console\Exception($element->id.' dependencies '.$dependency.' not found');
                 }
             }
 
@@ -103,7 +103,7 @@ class Dependency
         try {
             $this->sorted = new \SplFixedArray(count($this->elements));
         } catch (\Exception $e) {
-            throw new \Concole\Exception($e);
+            throw new \Peanut\Concole\Exception($e);
         }
 
         foreach ($this->elements as $element) {
