@@ -803,7 +803,7 @@ trait Machine
                         'genrsa',
                         '-out',
                         $sslname.'.key',
-                        '2048',
+                        '4096',
                     ];
                     $this->process($command, ['print' => false]);
 
