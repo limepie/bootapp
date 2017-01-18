@@ -474,6 +474,14 @@ trait Run
                     $command[] = '--add-host="'.$host.'":'.$ip;
                 }
 
+                if (true === isset($service['extra_hosts'])) {
+                    foreach ($service['extra_hosts'] as $value) {
+                        $command[] = '--add-host="'.$value.'"';
+                    }
+                } else {
+                    //$command[] = '-P';
+                }
+
                 if (true === isset($service['net'])) {
                     $command[] = '--net='.$service['net'];
                 }
