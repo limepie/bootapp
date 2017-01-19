@@ -1,6 +1,10 @@
 <?php
 namespace App\Controllers;
 
+use Herrera\Phar\Update\Manager;
+use Herrera\Phar\Update\Manifest;
+use Herrera\Version\Parser;
+
 declare(ticks=1);
 
 class Up extends Command
@@ -38,6 +42,24 @@ class Up extends Command
      */
     public function exec(\Peanut\Console\Application $app, array $config)
     {
+        $version = $app->getApplicationVersion();
+        if (version_compare($version, '0.0.0') > 0) {
+            $manager = new Manager($manifest = Manifest::loadFile(
+                'https://raw.githubusercontent.com/yejune/bootapp/master/manifest.json'
+            ));
+
+            $update = $manifest->findRecent(
+                Parser::toVersion($version),
+                true,
+                true
+            );
+            if (null !== $update) {
+                echo \Peanut\Console\Color::text('New version is available.', 'green', '').PHP_EOL;
+                echo \Peanut\Console\Color::text('Please execute `bootapp self-update`.', 'green', '').PHP_EOL;
+                exit();
+            }
+        }
+
         $this->process('sudo -v', ['print' => false]);
         $mode   = $app->getOption('attach') ? 'attach' : 'detach';
         $ispull = $app->getOption('pull') ? true : false;
