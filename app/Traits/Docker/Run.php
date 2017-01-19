@@ -547,6 +547,7 @@ trait Run
                 }
 
                 $runCommands[] = implode(' ', $command);
+                file_put_contents(getcwd().'/.bootapp.log', date('Y-m-d H:i:s').PHP_EOL.implode(' ', $command).PHP_EOL.PHP_EOL, FILE_APPEND);
 
                 $this->process($command, ['print' => false]); // create
 
