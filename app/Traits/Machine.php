@@ -720,18 +720,21 @@ trait Machine
         }
 
         foreach ($domainList as $ip => $domain) {
-            $command = [
-                'sudo',
-                'sed',
-                '-i',
-                '-e',
-                '"/ '.$domain.' /d"',
-                '/etc/hosts',
-                '2>&1',
-            ];
-            //echo PHP_EOL.implode(' ', $command).PHP_EOL;
+            $domains = explode(' ', $domain);
+            foreach ($domains as $domainName) {
+                $command = [
+                    'sudo',
+                    'sed',
+                    '-i',
+                    '-e',
+                    '"/ '.$domainName.' /d"',
+                    '/etc/hosts',
+                    '2>&1',
+                ];
+                //echo PHP_EOL.implode(' ', $command).PHP_EOL;
 
-            $this->process($command, ['print' => false]);
+                $this->process($command, ['print' => false]);
+            }
         }
 
         foreach ($domainList as $ip => $domain) {
@@ -767,7 +770,10 @@ trait Machine
                 $env = isset($service['environment']) ? $service['environment'] : [];
 
                 if (isset($env['DOMAIN']) && isset($env['USE_SSL'])) {
-                    $domainList[] = $env['DOMAIN'];
+                    $domains = explode(' ', $env['DOMAIN']);
+                    foreach ($domains as $domain) {
+                        $domainList[] = $domain;
+                    }
                 }
             }
         }

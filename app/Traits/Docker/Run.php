@@ -527,11 +527,11 @@ trait Run
                 }
 
                 if (true === isset($service['environment']['DOMAIN'])) {
-                    if (false === strpos($service['environment']['DOMAIN'], ' ')) {
+                    //if (false === strpos($service['environment']['DOMAIN'], ' ')) {
                         $command[] = '--label com.docker.bootapp.domain="'.$service['environment']['DOMAIN'].'"';
-                    } else {
-                        throw new \Peanut\Console\Exception('domain name not valid');
-                    }
+                    //} else {
+                    //    throw new \Peanut\Console\Exception('domain name not valid');
+                    //}
                 }
 
                 if (true === isset($service['image'])) {
