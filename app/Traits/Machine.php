@@ -802,7 +802,7 @@ trait Machine
                 $this->message(\Peanut\Console\Color::text('cert    | ', 'white').'domain '.$domain);
                 //$this->message(\Peanut\Console\Color::text('        | ', 'white').'key     ./var/certs/'.$domain.'.key');
 
-                $certfile = './var/certs/'.$domain.'.cert';
+                $certfile = './var/certs/'.$domain.'.crt';
                 if (false === file_exists($certfile)) {
                     $command = [
                         'openssl',
@@ -821,7 +821,7 @@ trait Machine
                         '-key',
                         $sslname.'.key',
                         '-out',
-                        $sslname.'.cert',
+                        $sslname.'.crt',
                         '-days',
                         '3650',
                         '-subj',
@@ -837,7 +837,7 @@ trait Machine
 
                     $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.$certfile, ['print' => false]);
 
-                    $this->message(\Peanut\Console\Color::text('        | ', 'white').'trusted ./var/certs/'.$domain.'.cert');
+                    $this->message(\Peanut\Console\Color::text('        | ', 'white').'trusted ./var/certs/'.$domain.'.crt');
                 } else {
                     //error
                 }
