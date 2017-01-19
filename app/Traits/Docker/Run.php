@@ -441,7 +441,7 @@ trait Run
                 }
 
                 if (true === isset($service['hostname'])) {
-                    $command[] = '--hostname='.$service['hostname'];
+                    $command[] = '--hostname="'.$service['hostname'].'"';
                 }
 
                 $addHost = [];
