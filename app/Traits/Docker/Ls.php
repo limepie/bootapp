@@ -15,7 +15,7 @@ trait Ls
             'docker',
             'ps',
             '--no-trunc',
-            '--format=\'id={{.ID}}&service={{.Label "com.docker.compose.service"}}&image={{.Image}}&command={{.Command}}&created={{.CreatedAt}}&running={{.RunningFor}}&ports={{.Ports}}&status={{.Status}}&size={{.Size}}&names={{.Names}}\'',
+            '--format=\'id={{.ID}}&service={{.Labels}}&image={{.Image}}&command={{.Command}}&created={{.CreatedAt}}&running={{.RunningFor}}&ports={{.Ports}}&status={{.Status}}&size={{.Size}}&names={{.Names}}\'',
             '2>&1',
         ];
         $psList = $this->process($command, ['print' => false])->toArray();
@@ -69,7 +69,7 @@ trait Ls
             foreach ($psList as $str) {
                 parse_str($str, $a);
 
-                if (false === isset($ilist[$a['id']])) {
+                if (false === isset($a['id']) || false === isset($ilist[$a['id']])) {
                     continue;
                 }
 
@@ -91,8 +91,7 @@ trait Ls
         } else {
             foreach ($psList as $str) {
                 parse_str($str, $a);
-
-                if (false === isset($ilist[$a['id']])) {
+                if (false === isset($a['id']) || false === isset($ilist[$a['id']])) {
                     continue;
                 }
 
