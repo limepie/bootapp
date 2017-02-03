@@ -655,6 +655,9 @@ trait Machine
 
         $stageService = isset($this->config['stages'][$stageName]['services']) ? $this->config['stages'][$stageName]['services'] : [];
 
+        if (false === isset($this->config['services'])) {
+            $this->config['services'] = [];
+        }
         foreach ($this->config['services'] + $stageService as $key => $value) {
             $serviceList[] = $this->getContainerName($key);
         }
