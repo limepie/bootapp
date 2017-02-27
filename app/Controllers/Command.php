@@ -78,6 +78,7 @@ class Command extends \Peanut\Console\Command
         if (!$process->isSuccessful() && $process->getErrorOutput()) {
             $msg = trim($process->getErrorOutput());
             if ("SecTrustSettingsCopyTrustSettings: The Trust Settings Record was corrupted." === $msg) {
+            } elseif ("SecTrustSettingsCopyCertificates: No Trust Settings were found." === $msg) {
             } else {
                 throw new \Peanut\Console\Exception($msg);
             }
