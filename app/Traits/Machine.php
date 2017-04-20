@@ -759,7 +759,22 @@ trait Machine
             $this->process($command, ['print' => false]);
         }
     }
+    public function getCertHashByDomain($domain)
+    {
+        $tmp = $this->process('sudo /usr/bin/security find-certificate -a -Z -c "'.$domain.'"', ['print' => false]);
 
+        $items = explode('SHA-1 ', $tmp);
+        $hash  = '';
+        foreach ($items as $item) {
+            if (false !== strpos($item, '"'.$domain.'"')) {
+                if (preg_match("#hash: ([^\n]+)#", $item, $m)) {
+                    $hash = $m['1'];
+                }
+            }
+        }
+
+        return $hash;
+    }
     public function setCert()
     {
         $stageName   = $this->getStageName();
@@ -792,13 +807,6 @@ trait Machine
 
             shell_exec('mkdir -p '.$SSL_DIR);
 
-            $dump = $this->process('sudo security dump-trust-settings -d', ['print' => false]);
-
-            $certList = [];
-            if (preg_match_all('#Cert (?P<key>[0-9]+): (?P<domain>[^\n]+)#', $dump, $matches)) {
-                $certList = $matches['domain'];
-            } else {
-            }
             foreach ($domainList as $ip => $domain) {
                 $sslname = $SSL_DIR.'/'.$domain;
 
@@ -834,8 +842,8 @@ trait Machine
                 } else {
                 }
                 if (true === file_exists($certfile)) {
-                    if (true === in_array($domain, $certList)) {
-                        $this->process('sudo security delete-certificate -c '.$domain.' /Library/Keychains/System.keychain', ['print' => false]);
+                    if ($hash = $this->getCertHashByDomain($domain)) {
+                        $this->process('sudo security delete-certificate -Z '.$hash.' /Library/Keychains/System.keychain', ['print' => false]);
                     }
 
                     $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.$certfile, ['print' => false]);
