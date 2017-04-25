@@ -75,8 +75,8 @@ class Command extends \Peanut\Console\Command
             }
         });
 
-        if ($process->getExitCode()) {
-            $msg = trim($process->getErrorOutput());
+        if ($process->getExitCode() && $process->getErrorOutput()) {
+            $msg = trim($process->getErrorOutput()).'('.$process->getExitCode().')';
             throw new \Peanut\Console\Exception($msg);
         }
 

@@ -199,7 +199,7 @@ trait Run
                     'rm',
                     '-f',
                     $service['name'],
-                    '2>&1',
+                    '> /dev/null 2>&1',
                 ];
                 $this->process($rmCommand, ['print' => false]);
             }
