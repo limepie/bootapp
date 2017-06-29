@@ -671,6 +671,8 @@ trait Machine
 
         $inspectList = $this->process($command, ['print' => false])->toArray();
 
+        //print_r($inspectList);
+        //exit();
         $machineName = $this->getMachineName();
         $projectName = $this->getProjectName();
 
@@ -690,9 +692,11 @@ trait Machine
         $domainList = [];
 
         foreach ($inspectList as $str) {
-            parse_str($str, $b);
+            $split = explode('&env=', $str, 2);
 
-            $envs = json_decode($b['env'], true);
+            parse_str($split[0], $b);
+
+            $envs = json_decode($split[1], true);
 
             $name = ltrim($b['name'], '/');
 

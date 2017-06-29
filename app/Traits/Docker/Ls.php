@@ -40,10 +40,12 @@ trait Ls
             }
 
             foreach ($inspectList as $str) {
-                parse_str($str, $b);
+                $split = explode('&env=', $str, 2);
+
+                parse_str($split[0], $b);
                 $b['domain'] = '';
 
-                $envs = json_decode($b['env'], true);
+                $envs = json_decode($split[1], true);
 
                 foreach ($envs as $env) {
                     list($key, $e) = explode('=', $env, 2);
@@ -52,8 +54,6 @@ trait Ls
                         $b['domain'] = $e;
                     }
                 }
-
-                unset($b['env']);
 
                 $name = ltrim($b['name'], '/');
 
