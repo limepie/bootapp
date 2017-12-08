@@ -817,7 +817,15 @@ trait Machine
                 $this->message(\Peanut\Console\Color::text('cert    | ', 'white').'domain '.$domain);
                 //$this->message(\Peanut\Console\Color::text('        | ', 'white').'key     ./var/certs/'.$domain.'.key');
 
-                $certfile = './var/certs/'.$domain.'.crt';
+                $certfile = $SSL_DIR.'/'.$domain.'.crt';
+                $certfile2 = $SSL_DIR.'/'.$domain.'.key';
+                if (file_exists($certfile)) {
+                    @unlink($certfile);
+                }
+
+                if (file_exists($certfile2)) {
+                    @unlink($certfile2);
+                }
                 if (false === file_exists($certfile)) {
                     $command = [
                         'openssl',
@@ -825,6 +833,27 @@ trait Machine
                         '-out',
                         $sslname.'.key',
                         '4096',
+                    ];
+                    $this->process($command, ['print' => false]);
+
+                    $command = [
+                        'rm -rf',
+                        '/tmp/openssl.cnf'
+                    ];
+                    $this->process($command, ['print' => false]);
+
+                    $command = [
+                        'cp',
+                        '/System/Library/OpenSSL/openssl.cnf',
+                        '/tmp/openssl.cnf'
+                    ];
+                    $this->process($command, ['print' => false]);
+
+                    $command = [
+                        'echo',
+                        '"[SAN]\nsubjectAltName=DNS:'.$domain.'"',
+                        '>>',
+                        '/tmp/openssl.cnf'
                     ];
                     $this->process($command, ['print' => false]);
 
@@ -837,11 +866,17 @@ trait Machine
                         $sslname.'.key',
                         '-out',
                         $sslname.'.crt',
+                        '-sha256',
                         '-days',
                         '3650',
                         '-subj',
-                        '/CN='.$domain,
+                        '/C=US/ST=CA/L=MV/CN='.$domain,
+                        '-reqexts SAN',
+                        '-extensions SAN',
+                        '-config',
+                        '/tmp/openssl.cnf',
                     ];
+
                     $this->process($command, ['print' => false]);
                 } else {
                 }
