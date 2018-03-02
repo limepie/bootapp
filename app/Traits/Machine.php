@@ -885,7 +885,15 @@ trait Machine
                         $this->process('sudo security delete-certificate -Z '.$hash.' /Library/Keychains/System.keychain', ['print' => false]);
                     }
 
-                    $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.$certfile, ['print' => false]);
+                    // mount 된 경로에 project forlder가 있을 경우 파일 위치 못찾는 현상 수정
+                    $tmpCertFile = '/tmp/'.md5($domain.'.crt');
+
+                    $this->process('rm -rf '.$tmpCertFile, ['print' => false]);
+                    $this->process('cp '.$certfile.' '.$tmpCertFile, ['print' => false]);
+
+                    $this->process('sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain '.$tmpCertFile, ['print' => false]);
+
+                    $this->process('rm -rf '.$tmpCertFile, ['print' => false]);
 
                     $this->message(\Peanut\Console\Color::text('        | ', 'white').'trusted ./var/certs/'.$domain.'.crt');
                 } else {
