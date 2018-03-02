@@ -40,7 +40,7 @@ class Ssh extends Command
         $containerName = $this->getContainerName($name);
 
         if (!$cmd) {
-            $cmd = '/bin/bash';
+            $cmd = 'sh';
         }
 
         $command = [
