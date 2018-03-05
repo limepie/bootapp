@@ -179,7 +179,7 @@ trait Run
 
                         //$this->message('build '.$service['name']);
                         echo $service['org_name'].' ';
-                        $this->process($buildOpts, ['print' => true]);
+                        $this->process($buildOpts, ['print' => false]);
                     }
                 }
 
