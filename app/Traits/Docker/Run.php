@@ -159,6 +159,7 @@ trait Run
                         $buildOpts   = [];
                         $buildOpts[] = 'docker';
                         $buildOpts[] = 'build';
+                        $buildOpts[] = '--no-cache';
                         $buildOpts[] = '--tag='.$service['name'];
 
                         if (true === is_array($service['build'])) {
