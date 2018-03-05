@@ -261,7 +261,7 @@ trait Run
                                     throw new \Peanut\Console\Exception($networkName.' conflicts with network '.$dockerNetworkName.', subnet '.$dockerNetworkSubnet);
                                 } else {
                                     $networkRmCommand = [
-                                        'docker',
+                                                        'docker',
                                         'network',
                                         'rm',
                                         $dockerNetworkName,
@@ -305,7 +305,13 @@ trait Run
                         if (true === isset($subnets[$machineName][$projectName])) {
                             $subnet = $subnets[$machineName][$projectName];
                         } else {
-                            $bridge = $this->process("docker network inspect --format='{{range .IPAM.Config}}{{.Subnet}}{{end}}' bridge", ['print' => false])->toString();
+                            $bridge = $this->process([
+                                'docker',
+                                'network',
+                                'inspect',
+                                "--format='{{range .IPAM.Config}}{{.Subnet}}{{end}}'",
+                                'bridge'
+                            ], ['print' => false])->toString();
 
                             $subnetIps = [];
                             foreach ($subnets as $machines) {
@@ -359,7 +365,7 @@ trait Run
         // create or run
         {
             if ('attach' == $mode) {
-                echo \Peanut\Console\Color::text('create  | ', 'white');
+                echo \Peanut\Console\Color::text('start   | ', 'white');
             } else {
                 echo \Peanut\Console\Color::text('run     | ', 'white');
             }
@@ -551,33 +557,14 @@ trait Run
 
                 $this->process($command, ['print' => false]); // create
 
-                echo $service['org_name'].' ';
-            }
-
-            echo PHP_EOL;
-        }
-
-        // start and attach
-        {
-            if ('attach' == $mode) {
-                echo \Peanut\Console\Color::text('start   | ', 'white');
-
-                foreach ($compose['services'] as $serviceName => $service) {
-                    echo $service['org_name'].' ';
+                if ('attach' == $mode) {
                     $command = [
                         'docker',
                         'start',
                         $service['name'],
                     ];
                     $this->process($command, ['print' => false]);
-                }
 
-                echo PHP_EOL;
-
-                echo 'attach  | ';
-
-                foreach ($compose['services'] as $serviceName => $service) {
-                    echo $service['org_name'].' ';
                     $command = [
                         'docker',
                         'logs',
@@ -589,11 +576,13 @@ trait Run
                         $service['name'],
                     ];
                     $this->childProcess($service['name'], implode(' ', $command));
+                } else {
                 }
 
-                echo PHP_EOL;
-            } else {
+                echo $service['org_name'].' ';
             }
+
+            echo PHP_EOL;
         }
     }
 }

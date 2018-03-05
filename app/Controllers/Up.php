@@ -23,10 +23,12 @@ class Up extends Command
     /**
      * @var string
      */
+    public $loop;
     /**
      * @param $mode
      */
     public $command = 'up';
+
     /**
      * @param \Peanut\Console\Application $app
      */
@@ -64,40 +66,37 @@ class Up extends Command
         $mode   = $app->getOption('attach') ? 'attach' : 'detach';
         $ispull = $app->getOption('pull') ? true : false;
 
-        if ('attach' == $mode) {
-            if (false === function_exists('pcntl_fork')) {
-                $mode = 'detach';
-                echo \Peanut\Console\Color::text('attach mode is not support, start detach mode', 'red', '').PHP_EOL;
-            }
+        if ('attach' == $mode && false === function_exists('pcntl_fork')) {
+            $mode = 'detach';
+            echo \Peanut\Console\Color::text('attach mode is not support, start detach mode', 'red', '').PHP_EOL.PHP_EOL;
+        }
 
+        if ('attach' == $mode) {
             $this->loop = \React\EventLoop\Factory::create();
             try {
-                {
-                    {
-                        $this->run();
-                    }
+                $this->run($mode, $ispull);
 
-                    $pcntl = new \MKraemer\ReactPCNTL\PCNTL($this->loop);
-                    $pcntl->on(SIGTERM, function () {
-                        // kill
-                        echo 'SIGTERM'.PHP_EOL;
-                        exit();
-                    });
-                    $pcntl->on(SIGHUP, function () {
-                        // logout
-                        echo 'SIGHUP'.PHP_EOL;
-                        exit();
-                    });
-                    $pcntl->on(SIGINT, function () {
-                        // ctrl+c
-                        echo 'Terminated by console'.PHP_EOL;
-                        posix_kill(posix_getpid(), SIGUSR1);
-                        echo $this->process('docker rm -f $(docker ps -q)');
-                        exit();
-                    });
+                $pcntl = new \MKraemer\ReactPCNTL\PCNTL($this->loop);
+                $pcntl->on(SIGTERM, function () {
+                    // kill
+                    echo 'SIGTERM'.PHP_EOL;
+                    exit();
+                });
+                $pcntl->on(SIGHUP, function () {
+                    // logout
+                    echo 'SIGHUP'.PHP_EOL;
+                    exit();
+                });
+                $pcntl->on(SIGINT, function () {
+                    // ctrl+c
+                    echo 'Terminated by console'.PHP_EOL;
+                    posix_kill(posix_getpid(), SIGUSR1);
+                    echo $this->process('docker rm -f $(docker ps -q)', ['print'=>false]);
+                    echo PHP_EOL;
+                    exit();
+                });
 
-                    echo 'Started as PID '.getmypid().PHP_EOL;
-                }
+                echo 'Started as PID '.getmypid().PHP_EOL;
 
                 $this->loop->run();
             } catch (\Exception $e) {
