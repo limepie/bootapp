@@ -128,6 +128,7 @@ trait Machine
             foreach ($env->toArray() as $export) {
                 if (1 === preg_match('/export (?P<key>.*)="(?P<value>.*)"/', $export, $match)) {
                     putenv($match['key'].'='.$match['value']);
+                    $_ENV[$match['key']] = $match['value'];
                 }
             }
         }
