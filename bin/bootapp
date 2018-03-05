@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 date_default_timezone_set('Asia/Seoul');
+error_reporting(-1);
 
 $loaded = false;
 
@@ -32,7 +33,25 @@ echo <<<LOGO
 LOGO;
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-    throw new \Peanut\Console\Exception("{$errstr} on {$errfile}:{$errline}");
+    // if (!(error_reporting() & $errno)) {
+    //     // This error code is not included in error_reporting, so let it fall
+    //     // through to the standard PHP error handler
+    //     return false;
+    // }
+
+    switch ($errno) {
+        case E_USER_ERROR:
+        case E_USER_WARNING:
+        case E_USER_NOTICE:
+            throw new \Peanut\Console\Exception("[{$errno}] {$errstr} on {$errfile}:{$errline}");
+            break;
+        default:
+            echo "Unknown error type: [{$errno}] $errstr on {$errfile}:{$errline}\n";
+            break;
+    }
+
+    /* Don't execute PHP internal error handler */
+    return true;
 });
 try {
     $app = new \Peanut\Console\Application('Bootapp', '0.0.0');
