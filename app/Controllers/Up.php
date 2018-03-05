@@ -34,6 +34,7 @@ class Up extends Command
      */
     public function configuration(\Peanut\Console\Application $app)
     {
+        $app->option('no-upgrade', ['require' => false, 'alias' => 'n', 'value' => false]);
         $app->option('attach', ['require' => false, 'alias' => 'a', 'value' => false]);
         $app->option('pull', ['require' => false, 'alias' => 'p', 'value' => false]);
     }
@@ -45,7 +46,9 @@ class Up extends Command
     public function exec(\Peanut\Console\Application $app, array $config)
     {
         $version = $app->getApplicationVersion();
-        if (version_compare($version, '0.0.0') > 0) {
+        $upgrade = $app->getOption('no-upgrade') ? 'no' : '';
+
+        if (version_compare($version, '0.0.0') > 0 && $upgrade != 'no') {
             $manager = new Manager($manifest = Manifest::loadFile(
                 'https://raw.githubusercontent.com/yejune/bootapp/master/manifest.json'
             ));
@@ -57,8 +60,8 @@ class Up extends Command
             );
             if (null !== $update) {
                 echo \Peanut\Console\Color::text('New version is available.', 'white', 'red').PHP_EOL;
-                echo \Peanut\Console\Color::text('Please execute `bootapp self-update`.', 'white', 'red').PHP_EOL;
-                echo PHP_EOL;
+                echo \Peanut\Console\Color::text('Please execute `bootapp self-update` Or use --no-upgrade(-n) option', 'white', 'red').PHP_EOL;
+                exit;
             }
         }
 
