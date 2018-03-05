@@ -54,9 +54,9 @@ class Up extends Command
                 true
             );
             if (null !== $update) {
-                echo \Peanut\Console\Color::text('New version is available.', 'green', '').PHP_EOL;
-                echo \Peanut\Console\Color::text('Please execute `bootapp self-update`.', 'green', '').PHP_EOL;
-                exit();
+                echo \Peanut\Console\Color::text('New version is available.', 'white', 'red').PHP_EOL;
+                echo \Peanut\Console\Color::text('Please execute `bootapp self-update`.', 'white', 'red').PHP_EOL;
+                echo PHP_EOL;
             }
         }
 
